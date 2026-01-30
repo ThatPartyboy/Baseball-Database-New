@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成員登入 - 中大紅襪</title>
+    <style>
+        /* 這裡保留你原本優質的 CSS 樣式 ... */
+        body {
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            width: 90%;
+            max-width: 380px;
+            padding: 30px 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1.5px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .login-container input:focus {
+            border-color: #a00;
+        }
+
+        /* 換成紅襪主題色 */
+        .login-btn {
+            background-color: #a00;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .login-btn:hover {
+            opacity: 0.9;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* 新增錯誤提示區塊 */
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>成員登入</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="帳號" required>
+            <input type="password" id="password" placeholder="密碼" required>
+            <div id="errorMessage" class="error-message">帳號或密碼錯誤</div>
+            <button type="submit" class="login-btn">登入</button>
+        </form>
+        <p><a href="/" style="color: #666; text-decoration: none;">← 回首頁</a></p>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // 阻止頁面重新導向
+            errorMessage.style.display = 'none'; // 隱藏錯誤訊息
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('登入成功！' + (data.role === 'admin' ? '您以管理員身份登入。' : ''));
+                    window.location.href = data.redirectUrl;
+                } else {
+                    errorMessage.style.display = 'block';
+                    errorMessage.innerText = data.message || '登入失敗';
+                }
+            } catch (err) {
+                console.error('登入發生錯誤:', err);
+                alert('伺服器連線異常，請稍後再試');
+            }
+        });
+    </script>
+</body>
+
+</html>

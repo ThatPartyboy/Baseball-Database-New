@@ -1,0 +1,457 @@
+
+/* ==========================================================================
+   卡片組件 (Search Cards)
+   ========================================================================== */
+
+.search-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 25px;
+    border-top: 5px solid var(--accent-blue);
+    transition: var(--transition);
+}
+
+.search-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.search-specific-card {
+    border-top-color: var(--success-green);
+}
+
+.game-specific-card {
+    border-top-color: var(--warning-orange);
+}
+
+.search-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: block;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #ddd;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.filter-group input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.search-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.search-group select,
+.search-group input,
+.search-group button {
+    padding: 8px;
+}
+
+/* ==========================================================================
+   表單與按鈕 (Forms & Buttons)
+   ========================================================================== */
+
+button {
+    padding: 10px 25px;
+    background-color: var(--accent-blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    min-width: 120px;
+    white-space: nowrap;
+}
+
+button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-search {
+    background-color: var(--success-green);
+}
+
+
+input,
+select {
+    padding: 10px 15px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    background-color: #fff;
+    transition: var(--transition);
+}
+
+select {
+    flex: 1;
+    min-width: 150px;
+    cursor: pointer;
+}
+
+input {
+    flex: 2;
+    min-width: 200px;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+/* ==========================================================================
+   表格與結果顯示 (Result & Data Tables)
+   ========================================================================== */
+
+.result-section {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-sm);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.section-header {
+    padding: 18px 24px;
+    font-weight: 700;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-theme {
+    background: linear-gradient(135deg, var(--primary-blue), #34495e);
+}
+
+.person-theme {
+    background: linear-gradient(135deg, var(--success-green), #2ecc71);
+}
+
+.game-theme {
+    background: linear-gradient(135deg, #1e3a5f, #2c5282) !important;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background-color: #f8f9fa;
+    color: #475569;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 16px;
+    text-align: center;
+    border-bottom: 2px solid #eee;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+    color: #4a5568;
+}
+
+.data-table tr:hover {
+    background-color: var(--light-blue-hover);
+}
+
+/* ==========================================================================
+   賽程表專用樣式 (Game Table Specifics)
+   ========================================================================== */
+.game-table {
+    min-width: 1100px;
+    /* 防止寬表格過度擠壓 */
+}
+
+.game-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background-color: #f8fafc;
+}
+
+.game-table td {
+    white-space: nowrap;
+    /* 強制文字不換行，解決垂直文字問題 */
+    padding: 12px 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 欄位寬度控制 */
+.col-wide {
+    min-width: 140px;
+}
+
+.col-team {
+    min-width: 130px;
+    font-weight: 700;
+}
+
+.col-score {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--danger-red);
+}
+
+/* 比賽隊伍顏色標籤 */
+.team-red {
+    color: var(--danger-red) !important;
+    background-color: #fff5f5 !important;
+    border-left: 4px solid #fc8181;
+}
+
+.team-black {
+    color: #1a202c !important;
+    background-color: #edf2f7 !important;
+    border-left: 4px solid #4a5568;
+}
+
+/* 比賽時間與地點 */
+.time-range {
+    font-family: 'Segoe UI', monospace;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.time-sep {
+    color: #a0aec0;
+    margin: 0 4px;
+}
+
+/* 日期與地點的容器 */
+.datetime-info {
+    line-height: 1.0;
+    /* 縮小行高，這是縮小間距最有效的方法 */
+    text-align: center;
+    padding: 2px 0;
+    /* 稍微調整內距 */
+}
+
+/* 日期文字 */
+.date-text {
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 2px;
+    /* 控制日期下方的微小間距 */
+}
+
+/* 地點標籤 */
+.place-tag {
+    display: inline-block;
+    margin-top: 4px;
+    /* 將原本的 4px 改為 0px */
+    font-size: 11px;
+    /* 稍微縮小字級，讓視覺比例更緊湊 */
+    color: #718096;
+    background: #edf2f7;
+    padding: 1px 6px;
+    /* 縮小標籤內的上下內距 */
+    border-radius: 4px;
+}
+
+/* 賽事查詢外層卡片 */
+.search-card.game-specific-card {
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* 讓搜尋與篩選群組在手機上垂直排列 */
+@media (max-width: 768px) {
+    /* 強制覆蓋內聯樣式的 160px，讓選單佔滿寬度 */
+    .filter-group div, 
+    .search-group {
+        flex-direction: column !important;
+        display: flex;
+        gap: 12px !important;
+    }
+
+    /* 針對 select 進行寬度修正 */
+    .game-specific-card select {
+        width: 100% !important; /* 覆蓋 inline width */
+        margin: 0 !important;
+    }
+
+    /* 按鈕也改為全寬，方便手指點擊 */
+    .btn-search, .btn-clear {
+        width: 100%;
+        padding: 12px;
+        margin: 5px 0;
+    }
+}
+
+/* 表格容器：確保超出時出現捲軸 */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto; /* 開啟水平捲軸 */
+    -webkit-overflow-scrolling: touch; /* 讓 iOS 滑動更順暢 */
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+/* 賽程表主體 */
+.game-table {
+    min-width: 1000px; /* 重要：14 個欄位至少需要 1000px 才不會擠壓 */
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #fff;
+}
+
+/* 表格內的欄位微調 */
+.game-table th, .game-table td {
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid #eee;
+    white-space: nowrap; /* 防止文字自動換行 */
+}
+
+/* 日期/地點欄位通常比較長，給予固定寬度 */
+.col-wide {
+    min-width: 150px;
+}
+
+/* 隊伍名稱欄位 */
+.col-team {
+    font-weight: bold;
+    min-width: 100px;
+}
+
+/* 比分與積分欄位 */
+.col-score {
+    background-color: #f9f9f9;
+    font-family: 'Arial', sans-serif;
+    width: 50px;
+}
+
+.team-red {
+    color: #a00; /* 紅襪主題紅 */
+}
+
+.team-black {
+    color: #333;
+}
+
+/* 針對時間範圍的特殊排版 */
+.time-range {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* 比賽日期與地點的標籤樣式 */
+.datetime-info .place-tag {
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+/* ==========================================================================
+   1. 全域溢出防護 (防止出現右側空白最快的方法)
+   ========================================================================== */
+html, body {
+    overflow-x: hidden; /* 強制隱藏水平捲軸，防止整個頁面被撐開 */
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* ==========================================================================
+   2. 賽事查詢 RWD 修正 (針對你 JS 注入的 HTML)
+   ========================================================================== */
+.game-specific-card .filter-group > div {
+    /* 這裡不用屬性選取器，直接針對層級處理 */
+    display: flex;
+    gap: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    /* 讓查詢按鈕與下拉選單在手機上一律改為垂直堆疊 */
+    .game-specific-card .filter-group > div,
+    .search-group {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+
+    /* 強制蓋掉 JS 注入的 160px 寬度 */
+    .game-specific-card select,
+    .game-specific-card button {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* ==========================================================================
+   3. 賽程表容器修正 (鎖住 1200px 表格)
+   ========================================================================== */
+.table-responsive {
+    width: 100%;
+    max-width: 100vw; /* 確保容器寬度絕不超過螢幕 */
+    overflow-x: auto; /* 開啟水平捲軸 */
+    -webkit-overflow-scrolling: touch; /* 讓手機滑動順暢 */
+    display: block;
+}
+
+.game-table {
+    /* 14 欄位必須要有足夠寬度才不會字體重疊，但必須被包裹在捲軸內 */
+    min-width: 1100px !important; 
+    table-layout: auto !important;
+}
+
+/* ==========================================================================
+   4. 清理重複的隊組卡片樣式
+   ========================================================================== */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+}
+
+@media (max-width: 768px) {
+    .team-grid {
+        grid-template-columns: 1fr; /* 手機版單欄顯示 */
+        padding: 10px;
+    }
+}

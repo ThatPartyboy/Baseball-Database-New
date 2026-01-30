@@ -1,0 +1,299 @@
+/* 圖片區塊外層容器 */
+.image-gallery {
+    display: flex;             /* 啟用 Flexbox */
+    justify-content: center;   /* 水平居中 */
+    gap: 30px;                 /* 圖片之間的間距 */
+    max-width: 1200px;         /* 限制最大寬度 */
+    margin: 40px auto;         /* 區塊置中且有上下間距 */
+    padding: 0 20px;
+}
+
+/* 個別圖片項目 */
+.gallery-item {
+    flex: 1;                   /* 讓圖片平分寬度 */
+    margin: 0;                 /* 移除 figure 預設邊距 */
+    text-align: center;        /* 文字置中 */
+}
+
+.gallery-item img {
+    width: 100%;               /* 圖片佔滿容器寬度 */
+    height: auto;              /* 保持原始比例 */
+    border-radius: 4px;        /* 稍微加一點圓角（可選） */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 增加一點立體感 */
+}
+
+/* 圖片下方的文字標題 */
+.gallery-item figcaption {
+    margin-top: 15px;
+    font-size: 1.5rem;         /* 調整字體大小 */
+    font-weight: bold;         /* 加粗 */
+    color: #333;
+}
+
+/* --- 手機版 RWD 調整 --- */
+@media (max-width: 768px) {
+    .image-gallery {
+        flex-direction: column; /* 螢幕小時轉為直向排列 */
+        gap: 20px;
+    }
+}
+
+/* 年份選單樣式 */
+.year-menu {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.year-btn {
+    padding: 8px 25px;
+    border: 1px solid #a00;
+    background: white;
+    color: #a00;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.year-btn:hover, .year-btn.active {
+    background: #a00;
+    color: white;
+}
+
+/* 四欄佈局容器 (對應 image_e5d603.png) */
+.category-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.category-card {
+    flex: 1;
+    text-align: center;
+}
+
+.category-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.category-card h3 {
+    display: block;
+    font-size: 1.5rem;
+    margin: 5px 0;
+    color: #333;
+}
+
+.category-card p {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* RWD: 手機版自動轉為 1 或 2 欄 */
+@media (max-width: 768px) {
+    .category-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+    .category-card {
+        width: 100%;
+        max-width: 400px;
+    }
+}
+
+/* 球隊卡片網格 */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    padding: 20px;
+}
+
+.team-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.team-card-image img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover; /* 確保圖片不變形 */
+}
+
+.team-card-content {
+    padding: 15px;
+}
+
+.team-card-content h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.team-card-content p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.4;
+    text-align: justify;
+}
+
+/* 摺疊選單設計 (Accordion) */
+.accordion-item {
+    border-top: 1px solid #eee;
+}
+
+.accordion-header {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 12px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #666;
+    transition: color 0.3s;
+}
+
+.accordion-header:hover {
+    color: #a00;
+}
+
+.accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s;
+    background: #f9f9f9;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+/* 展開狀態 */
+.accordion-item.active .accordion-body {
+    max-height: 200px;
+    padding: 10px;
+}
+
+.accordion-item.active .arrow {
+    transform: rotate(180deg);
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+}
+
+.team-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.team-card-image img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.accordion-item.active .accordion-body {
+    max-height: 500px; /* 展開高度 */
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.player-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.player-table th {
+    color: #888;
+    border-bottom: 2px solid #eee;
+}
+
+/* ==========================================================================
+   1. 全域溢出防護 (防止出現右側空白最快的方法)
+   ========================================================================== */
+html, body {
+    overflow-x: hidden; /* 強制隱藏水平捲軸，防止整個頁面被撐開 */
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* ==========================================================================
+   2. 賽事查詢 RWD 修正 (針對你 JS 注入的 HTML)
+   ========================================================================== */
+.game-specific-card .filter-group > div {
+    /* 這裡不用屬性選取器，直接針對層級處理 */
+    display: flex;
+    gap: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    /* 讓查詢按鈕與下拉選單在手機上一律改為垂直堆疊 */
+    .game-specific-card .filter-group > div,
+    .search-group {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+
+    /* 強制蓋掉 JS 注入的 160px 寬度 */
+    .game-specific-card select,
+    .game-specific-card button {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* ==========================================================================
+   3. 賽程表容器修正 (鎖住 1200px 表格)
+   ========================================================================== */
+.table-responsive {
+    width: 100%;
+    max-width: 100vw; /* 確保容器寬度絕不超過螢幕 */
+    overflow-x: auto; /* 開啟水平捲軸 */
+    -webkit-overflow-scrolling: touch; /* 讓手機滑動順暢 */
+    display: block;
+}
+
+.game-table {
+    /* 14 欄位必須要有足夠寬度才不會字體重疊，但必須被包裹在捲軸內 */
+    min-width: 1100px !important; 
+    table-layout: auto !important;
+}
+
+/* ==========================================================================
+   4. 清理重複的隊組卡片樣式
+   ========================================================================== */
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+}
+
+@media (max-width: 768px) {
+    .team-grid {
+        grid-template-columns: 1fr; /* 手機版單欄顯示 */
+        padding: 10px;
+    }
+}

@@ -1,0 +1,534 @@
+/* 基本設定 */
+* {
+    box-sizing: border-box;
+    /* 寬度計算包含 padding 與 border */
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    /* 核心色彩 */
+    --primary-blue: #2c3e50;
+    --accent-blue: #3498db;
+    --success-green: #27ae60;
+    --warning-orange: #e67e22;
+    --danger-red: #c53030;
+
+    /* 背景與邊框 */
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --border-color: #e0e6ed;
+    --light-blue-hover: #f1f9ff;
+
+    /* 文字顏色 */
+    --text-main: #333333;
+    --text-muted: #888888;
+    --text-light: #ffffff;
+
+    /* 物理規範 */
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+html {
+    overflow-y: scroll;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Microsoft JhengHei", Arial, sans-serif;
+    color: #333;
+    line-height: 1.8;
+    display: flex;
+    flex-direction: column;
+    /* 讓內容垂直排列 */
+    min-height: 100vh;
+}
+
+main,
+.content {
+    flex: 1;
+    /* 這一行最關鍵，它會自動撐開空間 */
+}
+
+.content {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+header {
+    background-color: transparent;
+    color: #fff;
+    padding: 15px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: background-color 0.4s ease, padding 0.4s ease;
+}
+
+header.scrolled {
+    background-color: rgba(34, 34, 34, 0.95);
+    /* 變為深黑色，帶點微透明感 */
+    padding: 10px 0;
+    /* 往下滑時可以稍微縮小高度，讓視野更好 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.container {
+    margin-top: 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+}
+
+.banner+.container {
+    margin-top: 40px;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+}
+
+nav ul li {
+    margin-left: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* 紅布條區域 */
+.banner {
+    width: 100%;
+    height: 300px;
+    background-color: #1f2020;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+        url('../images/banner.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.banner-title {
+    color: #ffffff;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    text-align: center;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    padding: 0 20px;
+}
+
+
+.sub-title {
+    font-size: 24px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+h3 {
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary-blue);
+}
+
+.philosophy p {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.points {
+    text-align: left;
+    list-style: none;
+    padding-left: 0;
+    color: #b00;
+    /* 強調深紅色 */
+    font-weight: bold;
+}
+
+.points li {
+    margin-bottom: 10px;
+}
+
+
+h1 {
+    text-align: center;
+    color: var(--primary-blue);
+    margin: 20px 0 40px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   影片區塊 (Video Section)
+   ========================================================================== */
+/* 影片區塊外層容器 */
+.video-section {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    /* 影片之間的間距 */
+    margin: 40px auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+/* 個別影片包裝 */
+.video-container {
+    flex: 1;
+    /* 讓兩個影片平分寬度 */
+    max-width: 800px;
+    text-align: center;
+}
+
+.iframe-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    /* 增加一點圓角感 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.iframe-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* 影片下方文字標題 */
+.video-caption {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* --- 手機版 RWD 調整 --- */
+@media (max-width: 768px) {
+    .video-section {
+        flex-direction: column;
+        /* 手機版改為垂直堆疊 */
+        align-items: center;
+    }
+
+    .video-container {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   活動照片區塊 (Activity Photos Section)
+   ========================================================================== */
+
+/* 全域區塊設定 */
+.photo-section {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.photo-main-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.photo-main-title::after {
+    content: '';
+    width: 60px;
+    height: 4px;
+    background: #a00;
+    /* 紅襪主題紅 */
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.year-group {
+    margin-bottom: 40px;
+}
+
+.year-title {
+    font-size: 1.4rem;
+    color: #333;
+    border-left: 5px solid #a00;
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+
+/* 網格系統：在大螢幕每行顯示 2 或 3 個卡片 */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+/* --- 修改 .photo-grid --- */
+.photo-grid {
+    display: grid;
+    /* 關鍵修改：將原本的 280px 改小為 180px */
+    /* 意思是一張卡片最小只要 180px 寬，這樣一排就能塞下更多張 */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px; /* 間距稍微縮小一點，更緊湊 */
+}
+
+/* --- 修改 .photo-card (讓卡片變緊湊) --- */
+.photo-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    /* padding 改小，節省空間 */
+    padding: 12px;
+    text-decoration: none;
+    color: #444;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    /* 字體稍微改小一點點 */
+    font-size: 0.95rem;
+}
+
+.photo-card span {
+    font-size: 0.8rem; /* 日期也跟著縮小一點 */
+    color: #a00;
+    font-weight: bold;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+.photo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(160, 0, 0, 0.1);
+    border-color: #a00;
+    color: #a00;
+}
+
+
+/* --- 手機版 RWD 保持原樣，或者也可以稍微調整間距 --- */
+@media (max-width: 600px) {
+     .photo-grid {
+        /* 如果你希望手機盡量保持單欄清晰閱讀，就留著這行 */
+        /* 如果希望手機也盡量並排，請看方案二 */
+        grid-template-columns: 1fr; 
+        gap: 8px;
+    }
+}
+
+/* ==========================================================================
+   頁尾社群區塊 (Social Footer Section)
+   ========================================================================== */
+
+/* 頁尾社群區塊背景 */
+.social-footer {
+    background-color: #f0f0f0;
+    /* 淺灰色背景 */
+    padding: 20px 0;
+    width: 100%;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    /* 按鈕間距 */
+    flex-wrap: wrap;
+    /* 手機版自動換行 */
+}
+
+/* 基礎按鈕樣式 */
+.footer-item {
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+    min-width: 160px;
+}
+
+/* 「深入瞭解我們」文字樣式 */
+.title-item {
+    background-color: transparent;
+    color: #333;
+    font-weight: bold;
+    min-width: auto;
+}
+
+/* 深色按鈕樣式 (對應圖片顏色) */
+.link-btn {
+    background-color: #4b3e35;
+    /* 深咖啡色/灰黑色 */
+    color: #ffffff;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.link-btn:hover {
+    background-color: #352c26;
+    /* 滑鼠移過變深 */
+}
+
+/* --- 手機版調整 --- */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        /* 直向排列 */
+        padding: 0 20px;
+    }
+
+    .footer-item {
+        width: 100%;
+        /* 手機版按鈕全寬 */
+    }
+
+    .title-item {
+        margin-bottom: 5px;
+    }
+}
+
+
+/* ==========================================================================
+   響應式設計 (Responsive Design)
+   ========================================================================== */
+/* 預設隱藏手機按鈕 */
+.mobile-btn {
+    display: none;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 10px 0px;
+    min-width: 0px;
+}
+
+@media (max-width: 768px) {
+
+    /* 讓容器左右邊距縮小，增加閱讀空間 */
+    .header-container,
+    .content {
+        padding: 0 15px;
+    }
+
+    /* 導覽列從橫向變成縱向（或隱藏） */
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        display: none;
+        /* 初始隱藏，等等用 JavaScript 或 Checkbox 點開 */
+    }
+
+    /* 讓 Banner 高度縮小，避免手機上一進去只看到紅布條 */
+    .banner {
+        height: 200px;
+    }
+
+    /* 標題字體縮小一點 */
+    h2.sub-title {
+        font-size: 20px;
+    }
+
+    .mobile-btn {
+        display: block;
+        /* 手機版顯示按鈕 */
+    }
+
+    nav {
+        display: none;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        /* 使用 100% 確保它緊貼在 Header 下方 */
+        left: 0;
+        background-color: #222;
+    }
+
+    /* 當選單被點開時顯示 */
+    nav.active {
+        display: block;
+    }
+
+    nav ul {
+        display: flex;
+        flex-direction: column;
+    }
+
+    nav ul li {
+        padding: 15px;
+        border-bottom: 1px solid #444;
+        font-size: 16px;
+    }
+
+    nav ul li a {
+        font-size: 16px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        /* 從橫向變直向 */
+        gap: 10px;
+    }
+
+    /* 標題文字置中 */
+    .title-item {
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+
+    /* 讓按鈕在手機版寬度 100% */
+    .link-btn {
+        width: 100%;
+        max-width: 300px;
+        /* 限制最大寬度，避免在平板上太長 */
+        box-sizing: border-box;
+        text-align: center;
+    }
+}

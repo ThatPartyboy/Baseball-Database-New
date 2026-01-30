@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中大聯盟(中大紅襪)棒球學校</title>
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo"><a href="/">中大聯盟(中大紅襪)棒球學校</a></div>
+            <button id="menu-toggle" class="mobile-btn">☰</button>
+            <nav id="nav-menu">
+                <ul>
+                    <li><a href="/">首頁</a></li>
+                    <li><a href="/enroll">招生體驗</a></li>
+                    <li><a href="/events">主辦賽事</a></li>
+                    <li><a href="/fields">場地相關</a></li>
+                    <li><a href="/teams">隊組資料</a></li>
+                    <li><a href="/admin">查詢系統</a></li>
+                    <li id="auth-menu-item"><a href="/login">成員登入</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="banner">
+        <h1 class="banner-title">球隊資料查詢系統</h1>
+    </div>
+
+    <div class="container">
+        <!-- 球員/家長查詢區塊 -->
+        <section class="search-card">
+            <h3>🔍 球員/家長查詢</h3>
+            <div class="filter-group">
+                <label class="search-hint">設定年份 (選填)</label>
+                <input type="number" id="yearMembers" placeholder="例如: 2025" value="2025">
+            </div>
+
+            <div class="search-group">
+                <select id="searchMembers">
+                    <option value="player">🏃 查詢球員</option>
+                    <option value="parent">👨‍👩‍👧 查詢家長</option>
+                </select>
+                <input type="text" id="keywordMembers" placeholder="輸入 ID 或 姓名..." style="flex-grow: 1;">
+                <button id="btnMembers" onclick="handleSearchMembers()" class="btn-search">執行搜尋</button>
+                <button type="button" class="btn-clear" onclick="clearMembersSearch()">清除結果</button>
+            </div>
+        </section>
+        
+        <!-- 球員/家長查詢結果 -->
+        <section id="resultSectionMembers" class="results-section" style="display: none;">
+            <div id="headerMembers" class="section-header search-theme">
+                <span id="titleMembers">搜尋結果</span>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead id="headMembers"></thead>
+                    <tbody id="bodyMembers"></tbody>
+                </table>
+            </div>
+
+            <div id="relatedArea" style="display:none; border-top: 2px dashed #ddd; margin-top: 20px;">
+                <div id="relatedHeader" class="section-header person-theme" style="font-size: 0.9rem;">
+                    <span id="relatedTitle">關聯資訊</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead id="headRelated"></thead>
+                        <tbody id="bodyRelated"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <hr class="divider" style="margin: 40px 0; border: 0; border-top: 1px solid #ddd;">
+
+        <!-- 球隊查詢區塊 -->
+        <section class="search-card search-specific-card">
+            <h3>🏟️ 球隊名單/團練資訊查詢</h3>
+            <div class="filter-group">
+                <label class="search-hint">設定年份與層級 (選填)</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="yearTeamOnly" placeholder="年份 (如 2025)" value="2025" style="width: 140px;">
+                    <select id="levelTeamOnly" style="width: 160px;">
+                        <option value="">-- 所有層級 --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="search-group">
+                <select id="selectTeamOnly" style="width: 160px;">
+                    <option value="">-- 所有隊伍 --</option>
+                </select>
+                <button id="btnTeam" onclick="handleSearchTeamOnly()" class="btn-search">查詢球隊</button>
+                <button type="button" class="btn-clear" onclick="clearTeamSearch()">清除結果</button>
+            </div>
+        </section>
+
+        <!-- 球隊詳細資訊 -->
+        <section id="teamSectionOnly" class="result-section" style="display:none;">
+            <div class="section-header search-theme" style="padding: 15px;">
+                <span>📅 球隊詳細地點與時程表</span>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>年份</th>
+                            <th>層級</th>
+                            <th>名稱</th>
+                            <th>團練時間/地點</th>
+                            <th>夜練時間/地點</th>
+                            <th>雨備時間/地點</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamBodyOnly"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 教練詳細資訊 -->
+        <section id="inRoleSection" class="result-section" style="display:none;">
+            <div class="section-header person-theme"
+                style="padding: 15px 24px; color: rgb(0, 0, 0); display: flex; justify-content: space-between; align-items: center;">
+                <span id="inRoleTitle">👥 詳細名單</span>
+                <button onclick="backToTeamList()" class="btn-clear">⬅ 返回球隊列表</button>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead id="inRoleHead"></thead>
+                    <tbody id="inRoleBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 球員詳細資訊 -->
+        <section id="personSection" class="result-section" style="display:none;">
+            <div class="section-header person-theme"
+                style="padding: 15px 24px; color: rgb(0, 0, 0); display: flex; justify-content: space-between; align-items: center;">
+                <span id="personTitle">👥 詳細名單</span>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead id="personHead"></thead>
+                    <tbody id="personBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <hr class="divider" style="margin: 40px 0; border: 0; border-top: 1px solid #ddd;">
+
+        <!-- 賽事查詢區塊 -->
+        <section class="search-card game-specific-card">
+            <h3>📅 賽事查詢</h3>
+            <div class="filter-group">
+                <label class="search-hint">設定年份與層級 (選填)</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="seasonGameSearch" style="width: 160px;">
+                        <option value="">-- 所有賽季 --</option>
+                    </select>
+                    <select id="levelGameSearch" style="width: 160px;">
+                        <option value="">-- 所有層級 --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="search-group">
+                <select id="selectGameSearch" style="width: 160px;">
+                        <option value="">-- 所有隊伍 --</option>
+                 </select>
+                <button id="btnGameSearch" onclick="handleSearchGame()" class="btn-search">查詢賽事</button>
+                <button onclick="fetchUmpireRanking()" class="btn-search">主審參與排名</button>
+                <button type="button" class="btn-clear" onclick="clearGameSearch()">清除結果</button>
+            </div>
+        </section>
+
+        <!-- 主審出勤排行榜 -->
+        <section id="umpireSection" class="result-section" style="display:none; margin-top: 20px;">
+            <div class="section-header person-theme"
+                style="background-color: #27ae60; color: white; display: flex; justify-content: space-between; align-items: center; padding: 15px 24px;">
+                <span id="umpireTitle">🏅 年度主審出勤排行榜</span>
+                <button onclick="document.getElementById('umpireSection').style.display='none'" class="btn-clear"
+                    style="color: white; border-color: white;">關閉</button>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>名次</th>
+                            <th>主審綽號</th>
+                            <th>擔任主審場數</th>
+                        </tr>
+                    </thead>
+                    <tbody id="umpireBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 賽程查詢結果 -->
+        <section id="gameSectionOnly" class="result-section game-card" style="display:none;">
+            <div class="section-header game-theme">
+                <div class="header-content">
+                    <span class="icon">📅</span>
+                    <span class="title">賽程表</span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table game-table">
+                    <thead>
+                        <tr>
+                            <th>賽季</th>
+                            <th>場序</th>
+                            <th>層級</th>
+                            <th class="col-wide">比賽日期/地點</th>
+                            <th>比賽時間</th>
+                            <th>主審</th>
+                            <th>賽別</th>
+                            <th class="col-team">先攻隊伍</th>
+                            <th class="col-score">得分</th>
+                            <th>積分</th>
+                            <th class="col-team">後攻隊伍</th>
+                            <th class="col-score">得分</th>
+                            <th>積分</th>
+                            <th>組別</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gameBodyOnly">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 賽事排名排行榜 -->
+        <section class="search-card game-specific-card">
+            <h3>🏆 賽事排名排行榜</h3>
+            <div class="filter-group">
+                <label class="search-hint">設定年份、層級與賽季 (必填)</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <select id="seasonRank" style="width: 140px;">
+                        <option value="">-- 選擇賽季 --</option>
+                    </select>
+                    <select id="roundRank" style="width: 140px;">
+                        <option value="">-- 選擇賽別 --</option>
+                    </select>
+                    <select id="levelRank" style="width: 140px;">
+                        <option value="">-- 選擇層級 --</option>
+                    </select>
+                    <input type="text" id="groupRank" placeholder="組別 (如: 甲組，選填)" style="width: 140px;">
+                </div>
+            </div>
+            <div class="search-group">
+                <button onclick="handleSearchStandings()" class="btn-search">產出排行榜</button>
+                <button type="button" class="btn-clear" onclick="clearRankSearch()">清除結果</button>
+            </div>
+        </section>
+
+        <!-- 賽事排名排行榜 -->
+        <section id="rankSection" class="result-section" style="display:none;">
+            <div class="section-header search-theme" style="background-color: #f39c12; color: white;">
+                <span id="rankTitle">🏆 賽事排名結果</span>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>名次</th>
+                            <th>球隊名稱</th>
+                            <th>已賽場數</th>
+                            <th>總積分</th>
+                            <th>總失分 (比序1)</th>
+                            <th>總得分 (比序2)</th>
+                            <th>組別</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+
+</html>
+
+<script src="/js/public.js"></script>
+<script src="/js/admin.js"></script>
