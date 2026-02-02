@@ -186,6 +186,7 @@ async function loadTeamData(year, level) {
                             <th class="col-score">得分</th>
                             <th>積分</th>
                             <th>組別</th>
+                            <th>結果</th>
                         </tr>
                     </thead>
                     <tbody id="gameBodyOnly">
@@ -210,7 +211,9 @@ async function loadTeamData(year, level) {
                     <select id="levelRank" style="width: 140px;">
                         <option value="">-- 選擇層級 --</option>
                     </select>
-                    <input type="text" id="groupRank" placeholder="組別 (如: 甲組，選填)" style="width: 140px;">
+                    <select id="groupRank" style="width: 140px;">
+                        <option value="">-- 選擇組別 --</option>
+                    </select>
                 </div>
             </div>
             <div class="search-group">
@@ -416,6 +419,9 @@ async function handleSearchGame() {
 
             const awayColorClass = (item.clothes == 1) ? 'team-red' : 'team-black';
             const homeColorClass = (item.clothes == 1) ? 'team-black' : 'team-red';
+            const resultBtn = item.result_img
+                ? `<button class="btn-view-img" onclick="showMatchResult('${item.result_img}')">計分表</button>`
+                : `<span class="no-data">-</span>`;
             return `
         <tr>
             <td>${item.season}</td>
@@ -439,6 +445,7 @@ async function handleSearchGame() {
             <td class="col-score">${item.hScore ?? 0}</td>
             <td>${item.hPoint ?? 0}</td>
             <td>${item.group ?? '-'}</td>
+            <td>${resultBtn}</td>
         </tr>
 `}).join('');
 
@@ -474,6 +481,10 @@ document.addEventListener('change', function (e) {
     if (e.target.id === 'roundRank') {
         // 變更賽別時，更新層級
         updateLevelOptions();
+    }
+    if (e.target.id === 'levelRank') {
+        // 變更層級時，更新組別
+        updateGroupOptions();
     }
 });
 
@@ -530,6 +541,36 @@ async function updateLevelOptions() {
 
     } catch (err) {
         console.error("無法取得層級列表:", err);
+    }
+}
+
+async function updateGroupOptions() {
+    const season = document.getElementById('seasonRank').value;
+    const round = document.getElementById('roundRank').value;
+    const level = document.getElementById('levelRank').value;
+    const groupSelect = document.getElementById('groupRank');
+    if (!season || !round || !level) {
+        groupSelect.innerHTML = '<option value="">-- 選擇組別 --</option>';
+        return;
+    }
+    groupSelect.innerHTML = '<option value="">-- 讀取中 --</option>';
+    try {
+        const response = await fetch(`/api/group-by-round-level?season=${encodeURIComponent(season)}&round=${encodeURIComponent(round)}&level=${encodeURIComponent(level)}`);
+        const groups = await response.json();
+        if (groups.length === 1 && groups[0] === null) {
+            const option = document.createElement('option');
+            option.value = "";
+            option.textContent = "無組別資料";
+            groupSelect.appendChild(option);
+            return;
+        }
+        groupSelect.innerHTML = '<option value="">-- 選擇組別 --</option>' +
+            groups.map(g => {
+                const val = (typeof g === 'object') ? g.group : g;
+                return `<option value="${val}">${val}</option>`;
+            }).join('');
+    } catch (err) {
+        console.error("無法取得組別列表:", err);
     }
 }
 
@@ -600,4 +641,15 @@ function renderRankTable(data) {
 function setSubmitting(btnId, isSubmitting) {
     const btn = document.getElementById(btnId);
     btn.disabled = isSubmitting;
+}
+
+function showMatchResult(imgUrl) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    modal.style.display = "block";
+    modalImg.src = imgUrl; // 這裡 imgUrl 就是資料庫存的 /images/results/...
+}
+
+function closeModal() {
+    document.getElementById('imageModal').style.display = "none";
 }

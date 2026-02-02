@@ -520,6 +520,9 @@ async function handleSearchGame() {
 
             const awayColorClass = (item.clothes == 1) ? 'team-red' : 'team-black';
             const homeColorClass = (item.clothes == 1) ? 'team-black' : 'team-red';
+            const resultBtn = item.result_img
+                ? `<button class="btn-view-img" onclick="showMatchResult('${item.result_img}')">計分表</button>`
+                : `<span class="no-data">-</span>`;
             return `
         <tr>
             <td>${item.season}</td>
@@ -543,6 +546,7 @@ async function handleSearchGame() {
             <td class="col-score">${item.hScore ?? 0}</td>
             <td>${item.hPoint ?? 0}</td>
             <td>${item.group ?? '-'}</td>
+            <td>${resultBtn}</td>
         </tr>
 `}).join('');
 
@@ -643,6 +647,38 @@ async function updateLevelOptions() {
         });
     } catch (err) {
         console.error("無法取得層級列表:", err);
+    }
+}
+
+document.getElementById('levelRank').addEventListener('click', updateGroupOptions);
+async function updateGroupOptions() {
+    const season = document.getElementById('seasonRank').value;
+    const round = document.getElementById('roundRank').value;
+    const level = document.getElementById('levelRank').value;
+    const groupSelect = document.getElementById('groupRank');
+    // 清空舊的選項
+    groupSelect.innerHTML = '<option value="">-- 選擇組別 --</option>';
+    try {
+        const response = await fetch(`/api/group-by-round-level?season=${encodeURIComponent(season)}&round=${encodeURIComponent(round)}&level=${encodeURIComponent(level)}`);
+        const groups = await response.json();
+        console.log(groups, groups.length);
+        if (groups.length === 1 && groups[0] === null) {
+            const option = document.createElement('option');
+            option.value = "";
+            option.textContent = "無組別資料";
+            groupSelect.appendChild(option);
+            return;
+        }
+
+        groups.forEach(group => {
+            const option = document.createElement('option');
+            option.value = group;
+            option.textContent = group;
+            groupSelect.appendChild(option);
+        });
+
+    } catch (err) {
+        console.error("無法取得組別列表:", err);
     }
 }
 
@@ -763,7 +799,18 @@ function clearRankSearch() {
     document.getElementById('seasonRank').selectedIndex = 0;
     document.getElementById('roundRank').innerHTML = '<option value="">-- 選擇賽別 --</option>';
     document.getElementById('levelRank').innerHTML = '<option value="">-- 選擇層級 --</option>';
-    document.getElementById('groupRank').value = "";   
+    document.getElementById('groupRank').value = "";
     document.getElementById('rankSection').style.display = 'none';
     document.getElementById('rankBody').innerHTML = "";
+}
+
+function showMatchResult(imgUrl) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    modal.style.display = "block";
+    modalImg.src = imgUrl; // 這裡 imgUrl 就是資料庫存的 /images/results/...
+}
+
+function closeModal() {
+    document.getElementById('imageModal').style.display = "none";
 }

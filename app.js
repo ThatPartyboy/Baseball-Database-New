@@ -38,6 +38,9 @@ app.get('/fields', checkRole('member'), (req, res) => {
 app.get('/teams', checkRole('member'), (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'teams.html'));
 });
+app.get('/umpire', checkRole('umpire'), (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'umpire.html'));
+});
 app.get('/admin', checkRole('admin'), (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });

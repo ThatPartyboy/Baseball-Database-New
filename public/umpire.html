@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中大聯盟(中大紅襪)棒球學校</title>
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/umpire.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo"><a href="/">中大聯盟(中大紅襪)棒球學校</a></div>
+            <button id="menu-toggle" class="mobile-btn">☰</button>
+            <nav id="nav-menu">
+                <ul>
+                    <li><a href="/">首頁</a></li>
+                    <li><a href="/enroll">招生體驗</a></li>
+                    <li><a href="/events">主辦賽事</a></li>
+                    <li><a href="/fields">場地相關</a></li>
+                    <li><a href="/teams">隊組資料</a></li>
+                    <li><a href="/umpire">裁判專區</a></li>
+                    <li><a href="/admin">查詢系統</a></li>
+                    <li id="auth-menu-item"><a href="/login">成員登入</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="banner">
+        <h1 class="banner-title">裁判專區</h1>
+    </div>
+
+
+    <main class="container">
+        <section class="search-card result-upload-card">
+            <h3>🏆 聯盟賽結果上傳</h3>
+            <p class="search-hint">請設定賽季與層級以選擇比賽場次</p>
+
+            <div class="filter-group">
+                <div style="display: flex; gap: 10px;">
+                    <select id="seasonGameSearch" style="width: 160px;">
+                        <option value="">-- 所有賽季 --</option>
+                    </select>
+                    <select id="levelGameSearch" style="width: 160px;">
+                        <option value="">-- 所有層級 --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="upload-form-group">
+                <label>選擇比賽場序：</label>
+                <select id="serNoGameSearch" style="width: 160px;">
+                    <option value="">-- 選擇場序 --</option>
+                </select>
+
+                <div class="score-input-container">
+                    <label>兩隊比分：</label>
+                    <div class="score-flex">
+                        <input type="number" id="guestScore" placeholder="先攻" min="0">
+                        <span class="vs-text">:</span>
+                        <input type="number" id="homeScore" placeholder="後攻" min="0">
+                    </div>
+                </div>
+
+                <div class="file-upload-container">
+                    <label>比賽結果截圖 (圖片上傳)：</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="resultImage" accept="image/*">
+                    </div>
+                </div>
+
+                <button id="btnSubmitResult" onclick="handleSubmitResult()" class="btn-search btn-full-width-blue">
+                    確認並開始上傳
+                </button>
+                <button id="btnGameSearch" onclick="handleSearchGame()"
+                    class="btn-search btn-full-width-green">查詢賽事</button>
+            </div>
+        </section>
+
+        <section id="gameSectionOnly" class="result-section game-card" style="display:none;">
+            <div class="section-header game-theme">
+                <div class="header-content">
+                    <span class="icon">📅</span>
+                    <span class="title">賽程表</span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table game-table">
+                    <thead>
+                        <tr>
+                            <th>賽季</th>
+                            <th>場序</th>
+                            <th>層級</th>
+                            <th class="col-wide">比賽日期/地點</th>
+                            <th>比賽時間</th>
+                            <th>主審</th>
+                            <th>賽別</th>
+                            <th class="col-team">先攻隊伍</th>
+                            <th class="col-score">得分</th>
+                            <th>積分</th>
+                            <th class="col-team">後攻隊伍</th>
+                            <th class="col-score">得分</th>
+                            <th>積分</th>
+                            <th>組別</th>
+                            <th>結果</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gameBodyOnly">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <footer class="social-footer">
+        <div class="footer-container">
+            <div class="footer-item title-item">深入瞭解我們 :</div>
+            <a href="https://www.facebook.com/groups/494170470652092" class="footer-item link-btn"
+                target="_blank">Facebook社團</a>
+            <a href="https://line.me/R/ti/p/@572mrcvn" class="footer-item link-btn" target="_blank">Line官方帳號</a>
+            <a href="https://www.youtube.com/channel/UCEZRyJta3gIYEcwePxL5Pdg" class="footer-item link-btn"
+                target="_blank">訂閱
+                YouTube</a>
+        </div>
+    </footer>
+</body>
+
+</html>
+
+<script src="/js/public.js"></script>
+<script src="/js/umpire.js"></script>

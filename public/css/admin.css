@@ -305,6 +305,11 @@ select:focus {
         gap: 12px !important;
     }
 
+    .search-card select {
+        width: 100% !important; /* 覆蓋 inline width */
+        margin: 0 !important;
+    }
+
     /* 針對 select 進行寬度修正 */
     .game-specific-card select {
         width: 100% !important; /* 覆蓋 inline width */
@@ -411,14 +416,6 @@ html, body {
         flex-direction: column !important;
         align-items: stretch !important;
         gap: 12px !important;
-    }
-
-    /* 強制蓋掉 JS 注入的 160px 寬度 */
-    .game-specific-card select,
-    .game-specific-card button {
-        width: 100% !important;
-        max-width: none !important;
-        margin-left: 0 !important;
     }
 }
 

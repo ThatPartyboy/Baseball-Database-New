@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/public.css">
     <link rel="stylesheet" href="/css/teams.css">
     <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/umpire.css">
 </head>
 
 <body>
@@ -22,6 +23,7 @@
                     <li><a href="/events">主辦賽事</a></li>
                     <li><a href="/fields">場地相關</a></li>
                     <li><a href="/teams">隊組資料</a></li>
+                    <li><a href="/umpire">裁判專區</a></li>
                     <li><a href="/admin">查詢系統</a></li>
                     <li id="auth-menu-item"><a href="/login">成員登入</a></li>
                 </ul>
@@ -63,6 +65,11 @@
                 YouTube</a>
         </div>
     </footer>
+
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
 </body>
 
 </html>

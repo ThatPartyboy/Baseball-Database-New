@@ -191,8 +191,8 @@ router.get('/search-game', async (req, res) => {
 
         // 3. 關鍵字搜尋：修正為搜尋聯集後的「球隊名稱」
         if (keyword && keyword.trim() !== "") {
-            sql += ` AND (guest.team_id = ? OR home.team_id = ?)`;
-            params.push(keyword, keyword);
+            sql += ` AND (lg.serNo = ? OR guest.team_id = ? OR home.team_id = ?)`;
+            params.push(keyword, keyword, keyword);
         }
 
         // 4. 排序：賽季 -> 自然排序場序
@@ -447,6 +447,30 @@ router.get('/level-by-round', async (req, res) => {
     }
 });
 
+router.get('/group-by-round-level', async (req, res) => {
+    const { season, round, level } = req.query;
+    try {
+        const sql = `SELECT DISTINCT \`group\` FROM league_game WHERE season = ? AND round = ? AND level = ? ORDER BY \`group\` ASC`;
+        const [rows] = await db.query(sql, [season, round, level]);
+        const groups = rows.map(row => row.group);
+        res.json(groups);
+    } catch (err) {
+        res.status(500).json({ error: "無法讀取組別資料" });
+    }
+});
+
+router.get('/serNo-by-season-level', async (req, res) => {
+    const { season, level } = req.query;
+    try {
+        const sql = `SELECT DISTINCT serNo FROM league_game WHERE season = ? AND level = ? ORDER BY LENGTH(serNo) ASC, serNo ASC`;
+        const [rows] = await db.query(sql, [season, level]);
+        const serNos = rows.map(row => row.serNo);
+        res.json(serNos);
+    } catch (err) {
+        res.status(500).json({ error: "無法讀取場序資料" });
+    }
+});
+
 router.get('/team-by-year-level', async (req, res) => {
     const { year, level } = req.query;
     try {
@@ -476,6 +500,28 @@ router.get('/available-years', async (req, res) => {
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: "無法讀取年份資料" });
+    }
+});
+
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: 'public/images/results/', // 圖片儲存路徑
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
+
+router.post('/upload-match-result', upload.single('result_image'), async (req, res) => {
+    const { season, level, serNo, away_score, home_score, guest_point, home_point } = req.body;
+    const imagePath = req.file ? `/images/results/${req.file.filename}` : null;
+
+    try {
+        const sql = `UPDATE league_game SET gScore = ?, hScore = ?, gPoint = ?, hPoint = ?, result_img = ? WHERE season = ? AND level = ? AND serNo = ?`;
+        await db.query(sql, [away_score, home_score, guest_point, home_point, imagePath, season, level, serNo]);
+        res.json({ success: true, path: imagePath });
+    } catch (err) {
+        res.status(500).json({ error: "更新資料庫失敗" });
     }
 });
 
