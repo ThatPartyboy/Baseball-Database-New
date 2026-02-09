@@ -178,6 +178,7 @@ async function loadTeamData(year, level) {
                             <th class="col-wide">比賽日期/地點</th>
                             <th>比賽時間</th>
                             <th>主審</th>
+                            <th>壘審</th>
                             <th>賽別</th>
                             <th class="col-team">先攻隊伍</th>
                             <th class="col-score">得分</th>
@@ -437,6 +438,7 @@ async function handleSearchGame() {
                 ${item.from.slice(0, 5)} - ${item.to.slice(0, 5)}
             </td>
             <td>${item.head_umpire ?? "未指派"}</td>
+            <td>${item.referee ?? "未指派"}</td>
             <td>${item.round}</td>
             <td class="col-team ${awayColorClass}">${awayTeamName}</td>
             <td class="col-score">${item.gScore ?? 0}</td>

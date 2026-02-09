@@ -165,7 +165,7 @@ router.get('/team-inrole', async (req, res) => {
  * 3-1. 球賽資訊查詢
  */
 router.get('/search-game', async (req, res) => {
-    const { keyword, season, level } = req.query;
+    const { keyword, season, level, date } = req.query;
 
     try {
         let sql = `
@@ -187,6 +187,11 @@ router.get('/search-game', async (req, res) => {
         if (level && level.trim() !== "") {
             sql += ` AND lg.level = ?`;
             params.push(level);
+        }
+
+        if (date && date.trim() !== "") {
+            sql += ` AND YEARWEEK(date, 1) = YEARWEEK(?, 1) `;
+            params.push(date);
         }
 
         // 3. 關鍵字搜尋：修正為搜尋聯集後的「球隊名稱」
@@ -459,11 +464,15 @@ router.get('/group-by-round-level', async (req, res) => {
     }
 });
 
-router.get('/serNo-by-season-level', async (req, res) => {
-    const { season, level } = req.query;
+router.get('/serNo-by-date', async (req, res) => {
+    const { date } = req.query;
     try {
-        const sql = `SELECT DISTINCT serNo FROM league_game WHERE season = ? AND level = ? ORDER BY LENGTH(serNo) ASC, serNo ASC`;
-        const [rows] = await db.query(sql, [season, level]);
+        const sql = `
+            SELECT DISTINCT serNo 
+            FROM league_game 
+            WHERE YEARWEEK(date, 1) = YEARWEEK(?, 1) 
+            ORDER BY LENGTH(serNo) ASC, serNo ASC`;
+        const [rows] = await db.query(sql, [date]);
         const serNos = rows.map(row => row.serNo);
         res.json(serNos);
     } catch (err) {
@@ -504,24 +513,83 @@ router.get('/available-years', async (req, res) => {
 });
 
 const multer = require('multer');
+const path = require('path');
+
 const storage = multer.diskStorage({
-    destination: 'public/images/results/', // 圖片儲存路徑
+    destination: 'public/images/results/', 
     filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
+        const ext = path.extname(file.originalname);
+        
+        const season = req.body.season || 'unknown';
+        const serNo = req.body.serNo || 'unknown';
+        
+        cb(null, `${season}_${serNo}_${Date.now()}${ext}`);
     }
 });
+
 const upload = multer({ storage: storage });
 
 router.post('/upload-match-result', upload.single('result_image'), async (req, res) => {
-    const { season, level, serNo, away_score, home_score, guest_point, home_point } = req.body;
+    const {season, serNo, away_score, home_score, guest_point, home_point } = req.body;
     const imagePath = req.file ? `/images/results/${req.file.filename}` : null;
 
     try {
-        const sql = `UPDATE league_game SET gScore = ?, hScore = ?, gPoint = ?, hPoint = ?, result_img = ? WHERE season = ? AND level = ? AND serNo = ?`;
-        await db.query(sql, [away_score, home_score, guest_point, home_point, imagePath, season, level, serNo]);
+        const sql = `UPDATE league_game SET gScore = ?, hScore = ?, gPoint = ?, hPoint = ?, result_img = ? WHERE season = ? AND serNo = ?`;
+        await db.query(sql, [away_score, home_score, guest_point, home_point, imagePath, season, serNo]);
         res.json({ success: true, path: imagePath });
     } catch (err) {
         res.status(500).json({ error: "更新資料庫失敗" });
+    }
+});
+
+const fs = require('fs');
+const resultsDir = path.join(__dirname, '../public/images/results');
+
+router.get('/duplicate-results', (req, res) => {
+    fs.readdir(resultsDir, (err, files) => {
+        if (err) return res.status(500).json({ error: "讀取目錄失敗" });
+        const groups = {};
+        files.forEach(file => {
+            const parts = file.split('_');
+            if (parts.length < 2) return;
+            
+            const gameId = `${parts[0]}_${parts[1]}`;
+            const timestamp = parseInt(parts[2]);
+
+            if (!groups[gameId]) groups[gameId] = [];
+            groups[gameId].push({ fileName: file, timestamp });
+        });
+
+        const resultList = [];
+        Object.keys(groups).forEach(id => {
+            if (groups[id].length > 1) {
+                // 由新到舊排序 (時間戳記大到小)
+                groups[id].sort((a, b) => b.timestamp - a.timestamp);
+                
+                groups[id].forEach((fileInfo, index) => {
+                    resultList.push({
+                        gameId: id,
+                        fileName: fileInfo.fileName,
+                        isLatest: index === 0, // 最新的那個設為 true
+                        uploadTime: new Date(fileInfo.timestamp).toLocaleString()
+                    });
+                });
+            }
+        });
+        res.json(resultList);
+    });
+});
+
+router.delete('/delete-result-image/:fileName', (req, res) => {
+    const fileName = req.params.fileName;
+    const filePath = path.join(resultsDir, fileName);
+
+    // 安全檢查：防止路徑跳轉攻擊
+    if (!fileName.includes('..') && fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        res.json({ success: true });
+    } else {
+        res.status(404).json({ error: "檔案不存在" });
     }
 });
 

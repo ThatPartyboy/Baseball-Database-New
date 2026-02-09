@@ -538,6 +538,7 @@ async function handleSearchGame() {
                 ${item.from.slice(0, 5)} - ${item.to.slice(0, 5)}
             </td>
             <td>${item.head_umpire ?? "未指派"}</td>
+            <td>${item.referee ?? "未指派"}</td>
             <td>${item.round}</td>
             <td class="col-team ${awayColorClass}">${awayTeamName}</td>
             <td class="col-score">${item.gScore ?? 0}</td>

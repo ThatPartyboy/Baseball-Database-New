@@ -277,7 +277,7 @@ html, body {
 
 .game-table {
     /* 14 欄位必須要有足夠寬度才不會字體重疊，但必須被包裹在捲軸內 */
-    min-width: 1100px !important; 
+    min-width: 1300 !important; 
     table-layout: auto !important;
 }
 

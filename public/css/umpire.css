@@ -98,3 +98,45 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+.latest-row {
+    background-color: #f1f9ff; /* 最新版淡淡的藍色 */
+}
+
+.old-row {
+    color: #888; /* 舊版文字轉淡 */
+}
+
+.btn-disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-view {
+    background-color: var(--accent-blue);
+    margin-right: 5px;
+}
+
+.btn-clear {
+    background-color: var(--danger-red) !important; /* 確保刪除按鈕是紅色的 */
+}
+
+/* ==========================================================================
+   重複圖片管理 - 手機版優化
+   ========================================================================== */
+
+@media screen and (max-width: 768px) {
+    /* 2. 統一按鈕在手機上的尺寸 */
+    .btn-view, 
+    .btn-clear, 
+    .btn-disabled {
+        width: 100% !important; /* 寬度佔滿 */
+        max-width: 120px;       /* 但限制最大寬度不要太誇張 */
+        padding: 10px 5px !important;
+        font-size: 14px !important;
+        margin: 0 !important;   /* 清除原本的 margin-right */
+        text-align: center;
+    }
+
+}

@@ -1,4 +1,3 @@
-
 /* ==========================================================================
    卡片組件 (Search Cards)
    ========================================================================== */
@@ -196,8 +195,9 @@ select:focus {
    賽程表專用樣式 (Game Table Specifics)
    ========================================================================== */
 .game-table {
-    min-width: 1100px;
-    /* 防止寬表格過度擠壓 */
+    /* 14 欄位必須要有足夠寬度才不會字體重疊，但必須被包裹在捲軸內 */
+    min-width: 1300 !important; 
+    table-layout: auto !important;
 }
 
 .game-table thead th {
@@ -292,13 +292,14 @@ select:focus {
     padding: 20px;
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* 讓搜尋與篩選群組在手機上垂直排列 */
 @media (max-width: 768px) {
+
     /* 強制覆蓋內聯樣式的 160px，讓選單佔滿寬度 */
-    .filter-group div, 
+    .filter-group div,
     .search-group {
         flex-direction: column !important;
         display: flex;
@@ -306,18 +307,21 @@ select:focus {
     }
 
     .search-card select {
-        width: 100% !important; /* 覆蓋 inline width */
+        width: 100% !important;
+        /* 覆蓋 inline width */
         margin: 0 !important;
     }
 
     /* 針對 select 進行寬度修正 */
     .game-specific-card select {
-        width: 100% !important; /* 覆蓋 inline width */
+        width: 100% !important;
+        /* 覆蓋 inline width */
         margin: 0 !important;
     }
 
     /* 按鈕也改為全寬，方便手指點擊 */
-    .btn-search, .btn-clear {
+    .btn-search,
+    .btn-clear {
         width: 100%;
         padding: 12px;
         margin: 5px 0;
@@ -327,26 +331,24 @@ select:focus {
 /* 表格容器：確保超出時出現捲軸 */
 .table-responsive {
     width: 100%;
-    overflow-x: auto; /* 開啟水平捲軸 */
-    -webkit-overflow-scrolling: touch; /* 讓 iOS 滑動更順暢 */
+    overflow-x: auto;
+    /* 開啟水平捲軸 */
+    -webkit-overflow-scrolling: touch;
+    /* 讓 iOS 滑動更順暢 */
     border-radius: 8px;
     margin-top: 20px;
 }
 
-/* 賽程表主體 */
-.game-table {
-    min-width: 1000px; /* 重要：14 個欄位至少需要 1000px 才不會擠壓 */
-    border-collapse: collapse;
-    width: 100%;
-    background-color: #fff;
-}
+
 
 /* 表格內的欄位微調 */
-.game-table th, .game-table td {
+.game-table th,
+.game-table td {
     padding: 10px 8px;
     text-align: center;
     border: 1px solid #eee;
-    white-space: nowrap; /* 防止文字自動換行 */
+    white-space: nowrap;
+    /* 防止文字自動換行 */
 }
 
 /* 日期/地點欄位通常比較長，給予固定寬度 */
@@ -368,7 +370,8 @@ select:focus {
 }
 
 .team-red {
-    color: #a00; /* 紅襪主題紅 */
+    color: #a00;
+    /* 紅襪主題紅 */
 }
 
 .team-black {
@@ -393,8 +396,10 @@ select:focus {
 /* ==========================================================================
    1. 全域溢出防護 (防止出現右側空白最快的方法)
    ========================================================================== */
-html, body {
-    overflow-x: hidden; /* 強制隱藏水平捲軸，防止整個頁面被撐開 */
+html,
+body {
+    overflow-x: hidden;
+    /* 強制隱藏水平捲軸，防止整個頁面被撐開 */
     width: 100%;
     margin: 0;
     padding: 0;
@@ -403,15 +408,16 @@ html, body {
 /* ==========================================================================
    2. 賽事查詢 RWD 修正 (針對你 JS 注入的 HTML)
    ========================================================================== */
-.game-specific-card .filter-group > div {
+.game-specific-card .filter-group>div {
     /* 這裡不用屬性選取器，直接針對層級處理 */
     display: flex;
     gap: 10px;
 }
 
 @media screen and (max-width: 768px) {
+
     /* 讓查詢按鈕與下拉選單在手機上一律改為垂直堆疊 */
-    .game-specific-card .filter-group > div,
+    .game-specific-card .filter-group>div,
     .search-group {
         flex-direction: column !important;
         align-items: stretch !important;
@@ -424,16 +430,13 @@ html, body {
    ========================================================================== */
 .table-responsive {
     width: 100%;
-    max-width: 100vw; /* 確保容器寬度絕不超過螢幕 */
-    overflow-x: auto; /* 開啟水平捲軸 */
-    -webkit-overflow-scrolling: touch; /* 讓手機滑動順暢 */
+    max-width: 100vw;
+    /* 確保容器寬度絕不超過螢幕 */
+    overflow-x: auto;
+    /* 開啟水平捲軸 */
+    -webkit-overflow-scrolling: touch;
+    /* 讓手機滑動順暢 */
     display: block;
-}
-
-.game-table {
-    /* 14 欄位必須要有足夠寬度才不會字體重疊，但必須被包裹在捲軸內 */
-    min-width: 1100px !important; 
-    table-layout: auto !important;
 }
 
 /* ==========================================================================
@@ -448,7 +451,8 @@ html, body {
 
 @media (max-width: 768px) {
     .team-grid {
-        grid-template-columns: 1fr; /* 手機版單欄顯示 */
+        grid-template-columns: 1fr;
+        /* 手機版單欄顯示 */
         padding: 10px;
     }
 }

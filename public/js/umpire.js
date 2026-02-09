@@ -1,83 +1,19 @@
 window.addEventListener('DOMContentLoaded', async () => {
-    initializeSeasonDropdowns(['seasonGameSearch']);
-    initializeGameLevelDropdowns(['levelGameSearch']);
+    // 傳入所有需要顯示層級的選單 ID
+    initializedSerNoDropdowns();
+    loadDuplicateManager();
 });
 
-async function initializeSeasonDropdowns(selectIds) {
-    try {
-        const response = await fetch('/api/season');
-        const seasons = await response.json();
+async function initializedSerNoDropdowns() {
+    const currentDay = getCurrentDate();
+    const currentDateElem = document.getElementById('currentDate');
+    currentDateElem.textContent = `目前日期：${currentDay}`;
 
-        selectIds.forEach(id => {
-            const selectElement = document.getElementById(id);
-            if (!selectElement) return;
-
-            seasons.forEach(season => {
-                const option = document.createElement('option');
-                option.value = season;
-                option.textContent = seasonExpend(season);
-                selectElement.appendChild(option);
-            });
-        });
-    } catch (err) {
-        console.error("層級選單初始化失敗:", err);
-    }
-}
-
-function seasonExpend(seasonStr) {
-
-    if (seasonStr.includes("春季")) {
-        return seasonStr + " (下半季)";
-    }
-    else if (seasonStr.includes("冬季")) {
-        return seasonStr + " (上半季)";
-    }
-}
-
-async function initializeGameLevelDropdowns(selectIds) {
-    try {
-        // 1. 只抓取一次資料，節省伺服器資源
-        const response = await fetch('/api/game-level');
-        const levels = await response.json();
-
-        // 2. 遍歷每一個指定的 ID
-        selectIds.forEach(id => {
-            const selectElement = document.getElementById(id);
-            if (!selectElement) return; // 如果找不到該 ID 就跳過
-
-            // 3. 將層級資料填入該選單
-            levels.forEach(level => {
-                const option = document.createElement('option');
-                option.value = level;
-                option.textContent = level;
-                selectElement.appendChild(option);
-            });
-        });
-    } catch (err) {
-        console.error("層級選單初始化失敗:", err);
-    }
-}
-
-/* ==========================================================================
-    賽程搜尋功能
-    ========================================================================== */
-document.getElementById('seasonGameSearch').addEventListener('click', updateSerNoFromSeasonOptions);
-document.getElementById('levelGameSearch').addEventListener('click', updateSerNoFromSeasonOptions);
-
-async function clearGameOptions() {
-    const level = document.getElementById('levelGameSearch');
-    const selectSerNo = document.getElementById('serNoGameSearch');
-}
-
-async function updateSerNoFromSeasonOptions() {
-
-    const season = document.getElementById('seasonGameSearch').value;
-    const level = document.getElementById('levelGameSearch').value;
     const selectSerNo = document.getElementById('serNoGameSearch');
     selectSerNo.innerHTML = '<option value="">-- 選擇場序 --</option>';
 
     try {
-        const response = await fetch(`/api/serNo-by-season-level?season=${encodeURIComponent(season)}&level=${encodeURIComponent(level)}`);
+        const response = await fetch(`/api/serNo-by-date?date=${encodeURIComponent(currentDay)}`);
         const serNos = await response.json();
         serNos.forEach(serNo => {
             const option = document.createElement('option');
@@ -92,13 +28,15 @@ async function updateSerNoFromSeasonOptions() {
 
 // 賽程搜尋
 async function handleSearchGame() {
-    const season = document.getElementById('seasonGameSearch').value;
-    const level = document.getElementById('levelGameSearch').value;
+    const currentDay = getCurrentDate();
+    const currentDateElem = document.getElementById('currentDate');
+    currentDateElem.textContent = `目前日期：${currentDay}`;
+
     const serNo = document.getElementById('serNoGameSearch').value;
 
     setSubmitting('btnGameSearch', true);
     try {
-        const apiUrl = `/api/search-game?keyword=${encodeURIComponent(serNo)}&season=${encodeURIComponent(season)}&level=${encodeURIComponent(level)}`;
+        const apiUrl = `/api/search-game?keyword=${encodeURIComponent(serNo)}&date=${encodeURIComponent(currentDay)}`;
         const response = await fetch(apiUrl);
         const data = await response.json();
 
@@ -134,6 +72,7 @@ async function handleSearchGame() {
                 ${item.from.slice(0, 5)} - ${item.to.slice(0, 5)}
             </td>
             <td>${item.head_umpire ?? "未指派"}</td>
+            <td>${item.referee ?? "未指派"}</td>
             <td>${item.round}</td>
             <td class="col-team ${awayColorClass}">${awayTeamName}</td>
             <td class="col-score">${item.gScore ?? 0}</td>
@@ -158,8 +97,6 @@ async function handleSearchGame() {
 }
 
 async function handleSubmitResult() {
-    const season = document.getElementById('seasonGameSearch').value;
-    const level = document.getElementById('levelGameSearch').value;
     const serNo = document.getElementById('serNoGameSearch').value;
     const guestScore = document.getElementById('guestScore').value;
     const homeScore = document.getElementById('homeScore').value;
@@ -172,9 +109,9 @@ async function handleSubmitResult() {
 
     let guestPoint = 0;
     let homePoint = 0;
-    if(guestScore > homeScore){
+    if (guestScore > homeScore) {
         guestPoint = 2;
-    } else if(guestScore < homeScore){
+    } else if (guestScore < homeScore) {
         homePoint = 2;
     } else {
         guestPoint = 1;
@@ -183,13 +120,13 @@ async function handleSubmitResult() {
 
     // 建立 FormData 用於傳送檔案
     const formData = new FormData();
-    formData.append('season', season);
-    formData.append('level', level);
+    formData.append('season', await getCurrentSeason()); 
     formData.append('serNo', serNo);
     formData.append('away_score', guestScore);
     formData.append('home_score', homeScore);
     formData.append('guest_point', guestPoint);
     formData.append('home_point', homePoint);
+
     if (imageFile) {
         formData.append('result_image', imageFile);
     }
@@ -207,6 +144,7 @@ async function handleSubmitResult() {
             alert("上傳成功！");
             // 可選：重新整理下方賽程表
             handleSearchGame();
+            loadDuplicateManager();
         } else {
             alert("上傳失敗：" + result.error);
         }
@@ -223,6 +161,22 @@ function setSubmitting(btnId, isSubmitting) {
     btn.disabled = isSubmitting;
 }
 
+function getCurrentDate() {
+    // const today = new Date();
+    const today = new Date('2025-11-21');
+    return today.toISOString().split('T')[0];
+}
+
+async function getCurrentSeason() {
+    try {
+        const response = await fetch(`/api/season`);
+        const seasons = await response.json();
+        return seasons[0];
+    } catch (err) {
+        console.error("無法取得賽季資料:", err);
+    }
+}
+
 function showMatchResult(imgUrl) {
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImg');
@@ -232,4 +186,45 @@ function showMatchResult(imgUrl) {
 
 function closeModal() {
     document.getElementById('imageModal').style.display = "none";
+}
+
+async function loadDuplicateManager() {
+    const body = document.getElementById('duplicateListBody');
+    const res = await fetch('/api/duplicate-results');
+    const list = await res.json();
+
+    body.innerHTML = list.map(item => `
+        <tr class="${item.isLatest ? 'latest-row' : 'old-row'}">
+            <td>${item.gameId}</td>
+            <td>${item.uploadTime}</td>
+            <td>
+                <button onclick="showMatchResult('/images/results/${item.fileName}')" class="btn-view">查看</button>
+                ${item.isLatest
+            ? `<button disabled class="btn-disabled" title="最新版本不可刪除">鎖定</button>`
+            : `<button onclick="deleteImage('${item.fileName}')" class="btn-clear">刪除舊版</button>`
+        }
+            </td>
+        </tr>
+    `).join('');
+}
+
+async function deleteImage(fileName) {
+    if (!confirm(`確定要刪除舊版圖片 ${fileName} 嗎？`)) return;
+
+    try {
+        const res = await fetch(`/api/delete-result-image/${fileName}`, {
+            method: 'DELETE'
+        });
+        const result = await res.json();
+
+        if (result.success) {
+            alert('刪除成功！');
+            // 💡 關鍵：刪除後再次呼叫，畫面上重複的項目就會消失
+            loadDuplicateManager();
+        } else {
+            alert('刪除失敗：' + result.error);
+        }
+    } catch (err) {
+        console.error("刪除發生錯誤:", err);
+    }
 }

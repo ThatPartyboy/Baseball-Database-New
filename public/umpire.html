@@ -38,18 +38,7 @@
     <main class="container">
         <section class="search-card result-upload-card">
             <h3>🏆 聯盟賽結果上傳</h3>
-            <p class="search-hint">請設定賽季與層級以選擇比賽場次</p>
-
-            <div class="filter-group">
-                <div style="display: flex; gap: 10px;">
-                    <select id="seasonGameSearch" style="width: 160px;">
-                        <option value="">-- 所有賽季 --</option>
-                    </select>
-                    <select id="levelGameSearch" style="width: 160px;">
-                        <option value="">-- 所有層級 --</option>
-                    </select>
-                </div>
-            </div>
+            <p id="currentDate">目前日期：2025-11-21</p>
 
             <div class="upload-form-group">
                 <label>選擇比賽場序：</label>
@@ -99,6 +88,7 @@
                             <th class="col-wide">比賽日期/地點</th>
                             <th>比賽時間</th>
                             <th>主審</th>
+                            <th>壘審</th>
                             <th>賽別</th>
                             <th class="col-team">先攻隊伍</th>
                             <th class="col-score">得分</th>
@@ -112,6 +102,22 @@
                     </thead>
                     <tbody id="gameBodyOnly">
                     </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="search-card">
+            <h3>🧹 重複圖片管理 (僅顯示重複項)</h3>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>比賽標識</th>
+                            <th>上傳時間</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="duplicateListBody"></tbody>
                 </table>
             </div>
         </section>
