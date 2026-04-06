@@ -534,7 +534,7 @@ router.post('/upload-match-result', upload.single('result_image'), async (req, r
     const imagePath = req.file ? `/images/results/${req.file.filename}` : null;
 
     try {
-        const sql = `UPDATE league_game SET gScore = ?, hScore = ?, gPoint = ?, hPoint = ?, result_img = ? WHERE season = ? AND serNo = ?`;
+        const sql = `UPDATE league_game SET gScore = ?, hScore = ?, gPoint = ?, hPoint = ?, result_img = COALESCE(?, result_img) WHERE season = ? AND serNo = ?`;
         await db.query(sql, [away_score, home_score, guest_point, home_point, imagePath, season, serNo]);
         res.json({ success: true, path: imagePath });
     } catch (err) {

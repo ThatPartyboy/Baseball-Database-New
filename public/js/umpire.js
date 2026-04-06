@@ -109,53 +109,59 @@ async function handleSubmitResult() {
         return;
     }
 
-    let guestPoint = 0;
-    let homePoint = 0;
-    if (guestScore > homeScore) {
-        guestPoint = 2;
-    } else if (guestScore < homeScore) {
-        homePoint = 2;
-    } else {
-        guestPoint = 1;
-        homePoint = 1;
-    }
-
-
-    // 建立 FormData 用於傳送檔案
-    const formData = new FormData();
-    formData.append('season', await getCurrentSeason()); 
-    formData.append('serNo', serNo);
-    formData.append('away_score', guestScore);
-    formData.append('home_score', homeScore);
-    formData.append('guest_point', guestPoint);
-    formData.append('home_point', homePoint);
-
-    if (imageFile) {
-        formData.append('result_image', imageFile);
-    }
-
-    setSubmitting('btnSubmitResult', true);
-
-    try {
-        const response = await fetch('/api/upload-match-result', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-        if (response.ok) {
-            alert("上傳成功！");
-            // 可選：重新整理下方賽程表
-            handleSearchGame();
-            loadDuplicateManager();
-        } else {
-            alert("上傳失敗：" + result.error);
+    if (!imageFile) {
+        if (!confirm("您尚未上傳計分表圖片，確定要提交比分嗎？")) {
+            return;
         }
-    } catch (err) {
-        console.error("上傳過程發生錯誤:", err);
-        alert("系統錯誤，請稍後再試");
-    } finally {
-        setSubmitting('btnSubmitResult', false);
+
+        let guestPoint = 0;
+        let homePoint = 0;
+        if (guestScore > homeScore) {
+            guestPoint = 2;
+        } else if (guestScore < homeScore) {
+            homePoint = 2;
+        } else {
+            guestPoint = 1;
+            homePoint = 1;
+        }
+
+
+        // 建立 FormData 用於傳送檔案
+        const formData = new FormData();
+        formData.append('season', await getCurrentSeason());
+        formData.append('serNo', serNo);
+        formData.append('away_score', guestScore);
+        formData.append('home_score', homeScore);
+        formData.append('guest_point', guestPoint);
+        formData.append('home_point', homePoint);
+
+        if (imageFile) {
+            formData.append('result_image', imageFile);
+        }
+
+        setSubmitting('btnSubmitResult', true);
+
+        try {
+            const response = await fetch('/api/upload-match-result', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert("上傳成功！");
+                // 可選：重新整理下方賽程表
+                handleSearchGame();
+                loadDuplicateManager();
+            } else {
+                alert("上傳失敗：" + result.error);
+            }
+        } catch (err) {
+            console.error("上傳過程發生錯誤:", err);
+            alert("系統錯誤，請稍後再試");
+        } finally {
+            setSubmitting('btnSubmitResult', false);
+        }
     }
 }
 
