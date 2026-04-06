@@ -98,9 +98,11 @@ async function handleSearchGame() {
 
 async function handleSubmitResult() {
     const serNo = document.getElementById('serNoGameSearch').value;
-    const guestScore = document.getElementById('guestScore').value;
-    const homeScore = document.getElementById('homeScore').value;
+    const guestScore = parseInt(document.getElementById('guestScore').value);
+    const homeScore = parseInt(document.getElementById('homeScore').value);
     const imageFile = document.getElementById('resultImage').files[0];
+
+    console.log(guestScore, homeScore)
 
     if (!serNo || guestScore === "" || homeScore === "") {
         alert("請填寫場序與完整比分！");
@@ -117,6 +119,7 @@ async function handleSubmitResult() {
         guestPoint = 1;
         homePoint = 1;
     }
+
 
     // 建立 FormData 用於傳送檔案
     const formData = new FormData();

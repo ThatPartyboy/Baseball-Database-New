@@ -18,7 +18,7 @@
                     <li><a href="/">首頁</a></li>
                     <li><a href="/enroll">招生體驗</a></li>
                     <li><a href="/events">主辦賽事</a></li>
-                    <li><a href="/fields">場地相關</a></li>
+                    <li><a href="/fields">賽程表排序</a></li>
                     <li><a href="/teams">隊組資料</a></li>
                     <li><a href="/umpire">裁判專區</a></li>
                     <li><a href="/admin">查詢系統</a></li>
@@ -33,11 +33,92 @@
 
 
     <main class="content">
-        <h2>招生體驗行程</h2>
-        <p>歡迎加入我們！這裡有詳細的預約流程...</p>
+        <div class="schedule-generator">
+            <h2>⚾ 聯賽賽程自動生成系統</h2>
+            <div class="form-group">
+                <label>選擇賽季：</label>
+                <select id="season_type">
+                    <option value="spring">上半季 (例行賽 + 排名賽)</option>
+                    <option value="fall">下半季 (例行賽 + 季後賽)</option>
+                </select>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>層級類別：</label>
+                    <select id="level_type">
+                        <option value="Minor">Minor (週六-月眉)</option>
+                        <option value="U8">U8 (週日-中大B)</option>
+                        <option value="Major">Major (週日-月眉)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>起始日期：</label>
+                    <input type="date" id="start_date" value="2026-03-07">
+                </div>
+                <div class="form-group">
+                    <label>隊伍數量 (3-8)：</label>
+                    <input type="number" id="num_teams" min="3" max="8" value="6">
+                </div>
+                <div class="form-group">
+                    <label>單日最大場次：</label>
+                    <input type="number" id="games_per_day" min="1" max="6" value="4">
+                </div>
+                <div class="form-group">
+                    <label>隨機種子 (選填)：</label>
+                    <input type="number" id="random_seed" placeholder="預設為 42">
+                </div>
+            </div>
+
+            <button id="generate-btn" onclick="handleGenerateSchedule()">🚀 生成並下載賽程表</button>
+            <div id="status-msg"></div>
+        </div>
+
+        <style>
+            .schedule-generator {
+                padding: 20px;
+                background: #f9f9f9;
+                border-radius: 8px;
+            }
+
+            .form-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin: 20px 0;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            .form-group input,
+            .form-group select {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+            }
+
+            #generate-btn {
+                background: #27ae60;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                cursor: pointer;
+                width: 100%;
+                font-size: 16px;
+            }
+
+            #generate-btn:hover {
+                background: #219150;
+            }
+        </style>
     </main>
 </body>
 
 </html>
 
 <script src="/js/public.js"></script>
+<script src="/js/field.js"></script>

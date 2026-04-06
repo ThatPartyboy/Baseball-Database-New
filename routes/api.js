@@ -516,13 +516,13 @@ const multer = require('multer');
 const path = require('path');
 
 const storage = multer.diskStorage({
-    destination: 'public/images/results/', 
+    destination: 'public/images/results/',
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
-        
+
         const season = req.body.season || 'unknown';
         const serNo = req.body.serNo || 'unknown';
-        
+
         cb(null, `${season}_${serNo}_${Date.now()}${ext}`);
     }
 });
@@ -530,7 +530,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.post('/upload-match-result', upload.single('result_image'), async (req, res) => {
-    const {season, serNo, away_score, home_score, guest_point, home_point } = req.body;
+    const { season, serNo, away_score, home_score, guest_point, home_point } = req.body;
     const imagePath = req.file ? `/images/results/${req.file.filename}` : null;
 
     try {
@@ -552,7 +552,7 @@ router.get('/duplicate-results', (req, res) => {
         files.forEach(file => {
             const parts = file.split('_');
             if (parts.length < 2) return;
-            
+
             const gameId = `${parts[0]}_${parts[1]}`;
             const timestamp = parseInt(parts[2]);
 
@@ -565,7 +565,7 @@ router.get('/duplicate-results', (req, res) => {
             if (groups[id].length > 1) {
                 // 由新到舊排序 (時間戳記大到小)
                 groups[id].sort((a, b) => b.timestamp - a.timestamp);
-                
+
                 groups[id].forEach((fileInfo, index) => {
                     resultList.push({
                         gameId: id,
@@ -592,5 +592,57 @@ router.delete('/delete-result-image/:fileName', (req, res) => {
         res.status(404).json({ error: "檔案不存在" });
     }
 });
+
+const { exec } = require('child_process');
+
+router.post('/generate-schedule', (req, res) => {
+    // 1. 取得 Python 檔案的絕對路徑
+    // __dirname 是目前 api.js 的位置，所以要先跳出一層去 python 資料夾
+    const scriptPath = path.join(__dirname, '../public/python/generator.py');
+
+    // 2. 準備參數 (先過濾掉可能干擾 shell 的字元，或使用更安全的傳遞方式)
+    const pythonParams = JSON.stringify(req.body);
+
+    // 3. 組合指令：Windows 建議用 python，路徑加上雙引號避免空格問題
+    // 使用 \" 處理 JSON 字串在 Windows 指令行的問題
+    const pythonCommand = `python "${scriptPath}" "${pythonParams.replace(/"/g, '\\"')}"`;
+
+    console.log("正在執行指令:", pythonCommand); // 除錯用，看路徑對不對
+
+    exec(pythonCommand, (error, stdout, stderr) => {
+        if (error) {
+            console.error("--- Node.js 執行層級錯誤 ---");
+            console.error(error.message); // 有時候錯誤在 error 物件裡，不是 stderr
+            console.error("--- Python 詳細報錯 (stderr) ---");
+            console.error(stderr);
+            return res.status(500).json({ error: "系統內部錯誤", details: stderr });
+        }
+
+        const filePath = stdout.trim();
+        // 如果 Python print 了很多東西，記得只拿最後一行的路徑
+        console.log("Python 回傳結果:", filePath);
+
+        const absolutePath = path.isAbsolute(filePath) ? filePath : path.resolve(filePath);
+
+        if (fs.existsSync(absolutePath)) {
+            res.download(absolutePath, (err) => {
+                if (err) console.error("下載失敗:", err);
+
+                fs.unlink(absolutePath, (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error("無法自動刪除暫存檔:", unlinkErr);
+                    } else {
+                        // 這樣你的 exports 資料夾就不會堆滿過期的賽程表了
+                        console.log(`🗑️  伺服器清理完畢：已刪除 ${path.basename(absolutePath)}`);
+                    }
+                });
+            });
+        } else {
+            console.error("找不到檔案路徑:", absolutePath);
+            res.status(404).json({ error: "找不到生成的檔案", path: absolutePath });
+        }
+    });
+});
+
 
 module.exports = router;

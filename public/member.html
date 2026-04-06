@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中大聯盟(中大紅襪)棒球學校</title>
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/member.css">
+    <link rel="stylesheet" href="/css/teams.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo"><a href="/">中大聯盟(中大紅襪)棒球學校</a></div>
+            <button id="menu-toggle" class="mobile-btn">☰</button>
+            <nav id="nav-menu">
+                <ul>
+                    <li><a href="/">首頁</a></li>
+                    <li><a href="/enroll">招生體驗</a></li>
+                    <li><a href="/events">主辦賽事</a></li>
+                    <li><a href="/fields">賽程表排序</a></li>
+                    <li><a href="/teams">隊組資料</a></li>
+                    <li><a href="/umpire">裁判專區</a></li>
+                    <li><a href="/admin">查詢系統</a></li>
+                    <li id="auth-menu-item"><a href="/login">成員登入</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="banner">
+    </div>
+
+
+    <main class="container">
+        <div class="member-container">
+            <aside class="member-sidebar">
+                <div class="sidebar-header">
+                    <h3>👤 會員專區</h3>
+                </div>
+                <ul class="sidebar-menu">
+                    <li class="menu-item active" data-target="team-info">
+                        <span class="icon">📋</span> 隊組資料
+                    </li>
+                    <li class="menu-item" data-target="umpire-zone">
+                        <span class="icon">⚖️</span> 裁判專區
+                    </li>
+                    <li class="menu-item" data-target="game-query">
+                        <span class="icon">🔍</span> 查詢系統
+                    </li>
+                </ul>
+            </aside>
+
+            <main class="member-content">
+                <div id="content-display">
+                    <p style="text-align: center; padding: 50px; color: #888;">請選擇左側功能以開始操作</p>
+                </div>
+            </main>
+        </div>
+    </main>
+</body>
+
+</html>
+
+<script src="/js/public.js"></script>
+<script src="/js/member.js"></script>

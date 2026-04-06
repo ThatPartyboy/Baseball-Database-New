@@ -511,7 +511,7 @@ async function updateRoundOptions() {
         // 自動觸發：如果只有一個賽別或已有預設值，直接更新層級
         if (rounds.length > 0) {
             roundSelect.value = rounds[0].round;
-            updateLevelOptions(); // 💡 關鍵：自動連動到下一層
+            updateLevelOptions(); 
         }
     } catch (err) {
         console.error("無法取得賽別列表:", err);
@@ -534,7 +534,6 @@ async function updateLevelOptions() {
         const response = await fetch(`/api/level-by-round?season=${encodeURIComponent(season)}&round=${encodeURIComponent(round)}`);
         const levels = await response.json();
 
-        // 💡 這裡假設 level 是純字串陣列，如果是物件請改成 l.level
         levelSelect.innerHTML = '<option value="">-- 選擇層級 --</option>' +
             levels.map(l => {
                 const val = (typeof l === 'object') ? l.level : l;

@@ -31,6 +31,10 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+app.get('/member', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'member.html'));
+});
+
 // private
 app.get('/fields', checkRole('member'), (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'fields.html'));
@@ -52,7 +56,11 @@ app.use('/api', publicRoutes);
 app.use('/auth', authRoutes);
 
 // 啟動伺服器
-const PORT = 3000;
-app.listen(PORT, () => {
+const PORT = 4000;
+const server = app.listen(PORT, () => {
     console.log(`專案已啟動：http://localhost:${PORT}`);
+});
+
+server.on('error', (err) => {
+    console.error('伺服器啟動失敗：', err);
 });
