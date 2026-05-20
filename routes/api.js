@@ -593,55 +593,76 @@ router.delete('/delete-result-image/:fileName', (req, res) => {
     }
 });
 
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
 router.post('/generate-schedule', (req, res) => {
-    // 1. 取得 Python 檔案的絕對路徑
-    // __dirname 是目前 api.js 的位置，所以要先跳出一層去 python 資料夾
-    const scriptPath = path.join(__dirname, '../public/python/generator.py');
+    // 1. 指定 Python 執行檔與腳本路徑
+    const pythonExe = process.platform === "win32" ? "python" : "python3";
+    const py = spawn(pythonExe, ["public/python/generator.py"]);
 
-    // 2. 準備參數 (先過濾掉可能干擾 shell 的字元，或使用更安全的傳遞方式)
-    const pythonParams = JSON.stringify(req.body);
+    let stdoutData = "";
+    let stderrData = "";
 
-    // 3. 組合指令：Windows 建議用 python，路徑加上雙引號避免空格問題
-    // 使用 \" 處理 JSON 字串在 Windows 指令行的問題
-    const pythonCommand = `python "${scriptPath}" "${pythonParams.replace(/"/g, '\\"')}"`;
+    // 2. 收集 Python 的標準輸出 (JSON 資料)
+    py.stdout.on('data', (data) => {
+        stdoutData += data.toString();
+    });
 
-    console.log("正在執行指令:", pythonCommand); // 除錯用，看路徑對不對
+    // 3. 收集錯誤訊息
+    py.stderr.on('data', (data) => {
+        stderrData += data.toString();
+    });
 
-    exec(pythonCommand, (error, stdout, stderr) => {
-        if (error) {
-            console.error("--- Node.js 執行層級錯誤 ---");
-            console.error(error.message); // 有時候錯誤在 error 物件裡，不是 stderr
-            console.error("--- Python 詳細報錯 (stderr) ---");
-            console.error(stderr);
-            return res.status(500).json({ error: "系統內部錯誤", details: stderr });
+    // 4. 當 Python 執行結束時
+    py.on('close', (code) => {
+        if (code !== 0) {
+            console.error(`❌ Python 崩潰 (Exit Code: ${code}): ${stderrData}`);
+            return res.status(500).json({ error: "生成失敗", details: stderrData });
         }
 
-        const filePath = stdout.trim();
-        // 如果 Python print 了很多東西，記得只拿最後一行的路徑
-        console.log("Python 回傳結果:", filePath);
-
-        const absolutePath = path.isAbsolute(filePath) ? filePath : path.resolve(filePath);
-
-        if (fs.existsSync(absolutePath)) {
-            res.download(absolutePath, (err) => {
-                if (err) console.error("下載失敗:", err);
-
-                fs.unlink(absolutePath, (unlinkErr) => {
-                    if (unlinkErr) {
-                        console.error("無法自動刪除暫存檔:", unlinkErr);
-                    } else {
-                        // 這樣你的 exports 資料夾就不會堆滿過期的賽程表了
-                        console.log(`🗑️  伺服器清理完畢：已刪除 ${path.basename(absolutePath)}`);
-                    }
-                });
-            });
-        } else {
-            console.error("找不到檔案路徑:", absolutePath);
-            res.status(404).json({ error: "找不到生成的檔案", path: absolutePath });
+        try {
+            const scheduleData = JSON.parse(stdoutData.trim());
+            res.json(scheduleData);
+        } catch (e) {
+            console.error("❌ 解析 JSON 失敗:", stdoutData);
+            res.status(500).json({ error: "格式錯誤" });
         }
     });
+
+    // 🏆 關鍵：透過 stdin 把 JSON 丟給 Python，這不會受到 Shell 字元限制
+    py.stdin.write(JSON.stringify(req.body));
+    py.stdin.end();
+});
+
+const ExcelJS = require('exceljs');
+
+router.post('/download-excel', async (req, res) => {
+    const { data, filename } = req.body;
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('賽程表');
+
+    // 定義欄位標題 (必須與前端傳來的 key 一致)
+    worksheet.columns = [
+        { header: '日期', key: '日期', width: 15 },
+        { header: '場次', key: '場次', width: 10 },
+        { header: '客隊(先攻)', key: '客隊(先攻)', width: 20 },
+        { header: '客隊球衣', key: '客隊球衣', width: 15 },
+        { header: '主隊(後攻)', key: '主隊(後攻)', width: 20 },
+        { header: '主隊球衣', key: '主隊球衣', width: 15 },
+        { header: '備註', key: '備註', width: 30 },
+    ];
+
+    // 塞入資料
+    worksheet.addRows(data);
+
+    // 設定回傳標頭
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename=${encodeURIComponent(filename)}.xlsx`);
+
+    // 寫入串流並回傳
+    await workbook.xlsx.write(res);
+    res.end();
 });
 
 

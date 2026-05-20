@@ -1,0 +1,452 @@
+/* =========================
+   fields.css
+   這頁專用：隔離 public.css 影響
+========================= */
+
+html,
+body {
+    overflow-x: hidden;
+}
+
+.fields-page {
+    text-align: initial !important;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    overflow-x: hidden;
+}
+
+.fields-page * {
+    box-sizing: border-box;
+}
+
+/* =========================
+   主卡片
+========================= */
+.fields-page .schedule-generator {
+    width: min(100%, 900px);
+    margin: 40px auto;
+    padding: 0;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+
+.fields-page .schedule-inner {
+    width: 100%;
+    max-width: 100%;
+    padding: 28px;
+}
+
+.fields-page .form-section,
+.fields-page .preview-section {
+    width: 100%;
+    max-width: 100%;
+}
+
+.fields-page .schedule-generator h2 {
+    margin: 0 0 24px;
+    text-align: center;
+    color: #1f2937;
+    line-height: 1.4;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* =========================
+   表單區塊
+========================= */
+.fields-page .form-group,
+.fields-page .form-grid,
+.fields-page .form-group-full {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    transform: none !important;
+    position: static !important;
+}
+
+.fields-page .form-group {
+    margin-bottom: 18px;
+}
+
+.fields-page .form-group label {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 0 8px 0 !important;
+    padding: 0 !important;
+    font-weight: 600;
+    color: #374151;
+    line-height: 1.5;
+    text-align: left !important;
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    position: static !important;
+    left: auto !important;
+}
+
+.fields-page .form-group select,
+.fields-page .form-group input {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    inline-size: 100% !important;
+    height: 44px;
+    margin: 0 !important;
+    padding: 10px 12px !important;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    background-clip: padding-box;
+    font-size: 16px;
+    line-height: 1.2;
+    color: #111827;
+    text-align: left;
+    position: static !important;
+    left: auto !important;
+    transform: none !important;
+}
+
+.fields-page .form-group select:focus,
+.fields-page .form-group input:focus {
+    border-color: #27ae60;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.12);
+}
+
+/* 解決 select/date 原生 UI 微幅突出 */
+.fields-page .form-group select,
+.fields-page .form-group input[type="date"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* 自訂 select 箭頭 */
+.fields-page .form-group select {
+    padding-right: 40px !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 20 20' fill='none'><path d='M5 7.5L10 12.5L15 7.5' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+}
+
+/* 日期欄位預留空間 */
+.fields-page .form-group input[type="date"] {
+    padding-right: 14px !important;
+}
+
+/* =========================
+   Grid
+========================= */
+.fields-page .form-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.fields-page .form-grid > .form-group {
+    min-width: 0 !important;
+}
+
+.fields-page .form-group-full {
+    margin-bottom: 20px;
+}
+
+/* =========================
+   主要按鈕
+========================= */
+.fields-page #generate-btn {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 8px;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #27ae60;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.fields-page #generate-btn:hover {
+    background: #219150;
+}
+
+.fields-page #generate-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.fields-page #status-msg {
+    margin-top: 14px;
+    text-align: center;
+    font-weight: 500;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* =========================
+   預覽區塊
+========================= */
+.fields-page #preview-section {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+    overflow: visible;
+}
+
+.fields-page .preview-title {
+    display: block !important;
+    margin: 0 0 20px;
+    padding-left: 10px;
+    border-left: 5px solid #27ae60;
+    color: #1f2937;
+    line-height: 1.5;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* =========================
+   表格容器
+   關鍵：手機可左右滑動
+========================= */
+.fields-page .table-responsive {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* 避免父層吃掉滑動 */
+.fields-page #preview-section,
+.fields-page .preview-section,
+.fields-page .schedule-inner {
+    overscroll-behavior-x: contain;
+}
+
+/* =========================
+   表格
+========================= */
+.fields-page #schedule-table {
+    width: 100%;
+    min-width: 750px;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.fields-page #schedule-table th,
+.fields-page #schedule-table td {
+    border: 1px solid #f0f0f0;
+    padding: 12px 15px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.fields-page #schedule-table th {
+    background: #27ae60;
+    color: #fff;
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* =========================
+   可編輯表格格子
+========================= */
+.fields-page .edit-cell {
+    transition: background-color 0.2s;
+}
+
+.fields-page .edit-cell:hover {
+    background: #f8f9fa;
+    cursor: pointer;
+}
+
+.fields-page .edit-cell:focus {
+    background: #fff9c4 !important;
+    outline: 2px solid #27ae60;
+}
+
+/* =========================
+   球衣顏色
+========================= */
+.fields-page .jersey-red {
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+    font-weight: 700;
+    border: 1px solid #ef9a9a !important;
+}
+
+.fields-page .jersey-black {
+    background-color: #f5f5f5 !important;
+    color: #212121 !important;
+    font-weight: 700;
+    border: 1px solid #d1d5db !important;
+}
+
+/* =========================
+   預覽按鈕列
+========================= */
+.fields-page .preview-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.fields-page #download-edited-btn,
+.fields-page #cancel-preview-btn {
+    max-width: 100%;
+    line-height: 1.4;
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.fields-page #download-edited-btn {
+    flex: 1 1 260px;
+    background: #2c3e50;
+    color: #fff;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.fields-page #cancel-preview-btn {
+    flex: 0 0 auto;
+    background: #e74c3c;
+    color: #fff;
+    padding: 15px 18px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* =========================
+   平板 / 手機
+========================= */
+@media (max-width: 768px) {
+    html,
+    body,
+    .fields-page {
+        overflow-x: hidden;
+    }
+
+    .fields-page {
+        padding: 0 12px !important;
+    }
+
+    .fields-page .schedule-generator {
+        width: 100%;
+        max-width: 100%;
+        margin: 20px auto;
+        border-radius: 14px;
+    }
+
+    .fields-page .schedule-inner {
+        padding: 18px 12px !important;
+    }
+
+    .fields-page .schedule-generator h2 {
+        font-size: 1.9rem;
+        line-height: 1.4;
+    }
+
+    .fields-page .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+    }
+
+    .fields-page .form-group,
+    .fields-page .form-group-full,
+    .fields-page .form-grid > .form-group {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .fields-page .form-group select,
+    .fields-page .form-group input {
+        font-size: 16px;
+    }
+
+    .fields-page #generate-btn,
+    .fields-page #download-edited-btn,
+    .fields-page #cancel-preview-btn {
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        line-height: 1.4;
+        text-align: center;
+        font-size: 15px;
+        padding: 12px 14px;
+    }
+
+    .fields-page .preview-actions {
+        flex-direction: column;
+    }
+
+    .fields-page #download-edited-btn,
+    .fields-page #cancel-preview-btn {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+
+    /* 手機表格：只能表格容器左右滑 */
+    .fields-page #preview-section {
+        overflow: visible;
+    }
+
+    .fields-page .table-responsive {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x;
+    }
+
+    .fields-page #schedule-table {
+        width: max-content;
+        min-width: 750px;
+        font-size: 13px;
+    }
+
+    .fields-page #schedule-table th,
+    .fields-page #schedule-table td {
+        padding: 8px;
+        white-space: nowrap;
+    }
+}

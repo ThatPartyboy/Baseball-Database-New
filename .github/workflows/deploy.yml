@@ -1,0 +1,41 @@
+name: CI/CD Deploy to Lightsail
+
+# 觸發條件：當 main 分支有 push 動作時才執行
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: 拉取 GitHub 倉庫的程式碼（如果有需要先在環境內測試或打包可以加在這）
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: 透過 SSH 連線到 Lightsail 主機並執行部署指令
+      - name: Executing remote ssh commands to deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USERNAME }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          port: 22
+          script: |
+            echo "==== 開始部署應用程式 ===="
+            
+            # 1. 進入你在 Lightsail 上的專案資料夾 (請改成你實際的專案路徑)
+            cd /home/admin/app
+            
+            # 2. 強制拉取最新程式碼，覆蓋本地修改（避免衝突）
+            git fetch --all
+            git reset --hard origin/main
+            
+            # 3. 依據你的網頁架構執行更新 (這裡以 Node.js 專案為例，如果是靜態網頁可刪除)
+            # npm install --production
+            
+            # 4. 重啟網頁服務 (例如使用 PM2 管理，如果是 Nginx 靜態網頁則不用)
+            # pm2 restart all
+            
+            echo "==== 部署完成！ ===="

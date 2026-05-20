@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>中大聯盟(中大紅襪)棒球學校</title>
     <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/fields.css">
 </head>
 
 <body>
     <header>
         <div class="header-container">
-            <div class="logo"><a href="/">中大聯盟(中大紅襪)棒球學校</a></div>
-            <button id="menu-toggle" class="mobile-btn">☰</button>
+            <div class="logo">
+                <a href="/">中大聯盟(中大紅襪)棒球學校</a>
+            </div>
+
+            <button id="menu-toggle" class="mobile-btn" type="button" aria-label="開啟選單">☰</button>
+
             <nav id="nav-menu">
                 <ul>
                     <li><a href="/">首頁</a></li>
@@ -28,97 +32,96 @@
         </div>
     </header>
 
-    <div class="banner">
-    </div>
+    <div class="banner"></div>
 
+    <main class="container fields-page">
+        <section class="schedule-generator">
+            <div class="schedule-inner">
+                <div class="form-section">
+                    <h2>⚾ 聯賽賽程自動生成系統</h2>
 
-    <main class="content">
-        <div class="schedule-generator">
-            <h2>⚾ 聯賽賽程自動生成系統</h2>
-            <div class="form-group">
-                <label>選擇賽季：</label>
-                <select id="season_type">
-                    <option value="spring">上半季 (例行賽 + 排名賽)</option>
-                    <option value="fall">下半季 (例行賽 + 季後賽)</option>
-                </select>
+                    <div class="form-group form-group-full">
+                        <label for="season_type">選擇賽季：</label>
+                        <select id="season_type" name="season_type">
+                            <option value="spring">上半季 (例行賽 + 排名賽)</option>
+                            <option value="fall">下半季 (例行賽 + 季後賽)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="level_type">層級類別：</label>
+                            <select id="level_type" name="level_type">
+                                <option value="Minor">Minor (週六-月眉)</option>
+                                <option value="U8">U8 (週日-中大B)</option>
+                                <option value="Major">Major (週日-月眉)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="start_date">起始日期：</label>
+                            <input type="date" id="start_date" name="start_date" value="2026-03-07">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="num_teams">隊伍數量 (3-8)：</label>
+                            <input type="number" id="num_teams" name="num_teams" min="3" max="8" value="6" inputmode="numeric">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="games_per_day">單日最大場次：</label>
+                            <input type="number" id="games_per_day" name="games_per_day" min="1" max="6" value="4" inputmode="numeric">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="random_seed">隨機種子 (選填)：</label>
+                            <input type="number" id="random_seed" name="random_seed" placeholder="預設為 42" inputmode="numeric">
+                        </div>
+                    </div>
+
+                    <button id="generate-btn" type="button" onclick="handleGenerateSchedule()">
+                        🚀 生成並下載賽程表
+                    </button>
+
+                    <div id="status-msg" aria-live="polite"></div>
+                </div>
+
+                <section id="preview-section" class="preview-section" style="display:none;">
+                    <h3 class="preview-title">📋 賽程預覽 (可直接點擊表格文字進行微調)</h3>
+
+                    <div class="table-responsive">
+                        <table id="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>場次</th>
+                                    <th>客隊(先攻)</th>
+                                    <th>客隊球衣</th>
+                                    <th>主隊(後攻)</th>
+                                    <th>主隊球衣</th>
+                                    <th>備註</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schedule-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="preview-actions">
+                        <button id="download-edited-btn" type="button" onclick="downloadEditedSchedule()">
+                            💾 確認修改並下載 Excel 檔案
+                        </button>
+
+                        <button id="cancel-preview-btn" type="button"
+                            onclick="document.getElementById('preview-section').style.display='none'">
+                            取消
+                        </button>
+                    </div>
+                </section>
             </div>
-
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>層級類別：</label>
-                    <select id="level_type">
-                        <option value="Minor">Minor (週六-月眉)</option>
-                        <option value="U8">U8 (週日-中大B)</option>
-                        <option value="Major">Major (週日-月眉)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>起始日期：</label>
-                    <input type="date" id="start_date" value="2026-03-07">
-                </div>
-                <div class="form-group">
-                    <label>隊伍數量 (3-8)：</label>
-                    <input type="number" id="num_teams" min="3" max="8" value="6">
-                </div>
-                <div class="form-group">
-                    <label>單日最大場次：</label>
-                    <input type="number" id="games_per_day" min="1" max="6" value="4">
-                </div>
-                <div class="form-group">
-                    <label>隨機種子 (選填)：</label>
-                    <input type="number" id="random_seed" placeholder="預設為 42">
-                </div>
-            </div>
-
-            <button id="generate-btn" onclick="handleGenerateSchedule()">🚀 生成並下載賽程表</button>
-            <div id="status-msg"></div>
-        </div>
-
-        <style>
-            .schedule-generator {
-                padding: 20px;
-                background: #f9f9f9;
-                border-radius: 8px;
-            }
-
-            .form-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-                margin: 20px 0;
-            }
-
-            .form-group label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: bold;
-            }
-
-            .form-group input,
-            .form-group select {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ddd;
-            }
-
-            #generate-btn {
-                background: #27ae60;
-                color: white;
-                padding: 12px 20px;
-                border: none;
-                cursor: pointer;
-                width: 100%;
-                font-size: 16px;
-            }
-
-            #generate-btn:hover {
-                background: #219150;
-            }
-        </style>
+        </section>
     </main>
+
+    <script src="/js/public.js"></script>
+    <script src="/js/field.js"></script>
 </body>
-
 </html>
-
-<script src="/js/public.js"></script>
-<script src="/js/field.js"></script>

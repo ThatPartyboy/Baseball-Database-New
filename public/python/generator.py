@@ -5,6 +5,9 @@ import sys
 import json
 import os
 from datetime import datetime, timedelta
+import io
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # 確保輸出目錄存在
 EXPORT_DIR = "exports"
@@ -114,7 +117,7 @@ def generate_spring(num_teams, level_type, start_date_str, games_per_day, random
                 total_matches += 1
                 daily_matches.append({
                     "日期": game_date.strftime("%Y-%m-%d"), "星期": day_name, "場次": f"{serNo}-{total_matches}",
-                    "地點": venue, "客隊(先攻)": away, "客隊球衣": away_j, "主隊(後攻)": home, "主隊球衣": home_j, 
+                    "地點": venue, "客隊(先攻)": away, "客隊球衣": away_j, "主隊(後攻)": home, "主隊球衣": home_j,
                     "備註": "連打或隔場" if (team_daily_count[t1] == 2 or team_daily_count[t2] == 2) else ""
                 })
             else:
@@ -140,7 +143,7 @@ def generate_spring(num_teams, level_type, start_date_str, games_per_day, random
                 })
             week_offset += 1
 
-    return save_to_excel(final_schedule, f"{level_type}_春季賽程")
+    return final_schedule
 
 
 def generate_fall(num_teams, level_type, start_date_str, games_per_day, randomseed=42):
@@ -315,7 +318,7 @@ def generate_fall(num_teams, level_type, start_date_str, games_per_day, randomse
         final_schedule.extend(daily_matches)
         week_offset += 1
 
-    return save_to_excel(final_schedule, f"{level_type}_秋季賽程")
+    return final_schedule
 
 
 def save_to_excel(data, base_name):
@@ -336,8 +339,12 @@ def save_to_excel(data, base_name):
 
 if __name__ == "__main__":
     try:
-        # 從命令列讀取 JSON 參數
-        input_data = json.loads(sys.argv[1])
+        input_raw = sys.stdin.read()
+
+        if not input_raw:
+            raise ValueError("接收到的輸入資料為空")
+
+        input_data = json.loads(input_raw)
 
         season = input_data.get("season", "spring")
         num_teams = int(input_data.get("num_teams", 6))
@@ -347,15 +354,15 @@ if __name__ == "__main__":
         randomseed = int(input_data.get("random_seed", 42))
 
         if season == "spring":
-            result_path = generate_spring(
-                num_teams, level, start_date, games_per_day, randomseed)
+            schedule_data = generate_spring(
+                num_teams, level, start_date, games_per_day, randomseed)  # 修改函式回傳 list 而非存檔
         else:
-            result_path = generate_fall(
+            schedule_data = generate_fall(
                 num_teams, level, start_date, games_per_day, randomseed)
 
-        # 成功後印出路徑，Node.js 會接收這行字串
-        print(result_path)
+        sys.stdout.write(json.dumps(schedule_data, ensure_ascii=False))
+        sys.stdout.flush()  # 確保緩衝區清空
 
     except Exception as e:
-        print(f"Error: {str(e)}", file=sys.stderr)
+        print(json.dumps({"error": str(e)}), file=sys.stderr)
         sys.exit(1)
