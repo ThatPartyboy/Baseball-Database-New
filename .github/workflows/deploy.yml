@@ -25,17 +25,16 @@ jobs:
           script: |
             echo "==== 開始部署應用程式 ===="
             
-            # 1. 進入你在 Lightsail 上的專案資料夾 (請改成你實際的專案路徑)
             cd /home/admin/app
             
-            # 2. 強制拉取最新程式碼，覆蓋本地修改（避免衝突）
+            # 1. 強制拉取最新程式碼，覆蓋本地修改（避免衝突）
             git fetch --all
             git reset --hard origin/main
             
-            # 3. 依據你的網頁架構執行更新 (這裡以 Node.js 專案為例，如果是靜態網頁可刪除)
+            # 2. 執行更新 
             # npm install --production
             
-            # 4. 重啟網頁服務 (例如使用 PM2 管理，如果是 Nginx 靜態網頁則不用)
+            # 3. 重啟網頁服務 
             # pm2 restart all
             
             echo "==== 部署完成！ ===="
