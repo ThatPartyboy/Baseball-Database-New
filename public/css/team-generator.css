@@ -1,0 +1,121 @@
+.team-generator-page {
+    padding-top: 40px;
+    padding-bottom: 60px;
+}
+
+.team-generator-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+    padding: 34px 28px 40px;
+}
+
+.team-generator-inner h2 {
+    margin: 0 0 18px;
+    text-align: center;
+    font-size: 26px;
+    color: #0f172a;
+}
+
+.page-description {
+    max-width: 720px;
+    margin: 0 auto 30px;
+    text-align: center;
+    color: #64748b;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    color: #0f172a;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.15);
+}
+
+#generate-team-btn {
+    width: 100%;
+    margin-top: 32px;
+    padding: 15px 20px;
+    border: 0;
+    border-radius: 8px;
+    background: #27ae60;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#generate-team-btn:hover {
+    background: #219653;
+}
+
+#generate-team-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+#team-status-msg {
+    margin-top: 16px;
+    min-height: 24px;
+    text-align: center;
+    font-size: 15px;
+}
+
+#team-status-msg.success {
+    color: #15803d;
+}
+
+#team-status-msg.error {
+    color: #dc2626;
+}
+
+#team-status-msg.loading {
+    color: #2563eb;
+}
+
+@media (max-width: 768px) {
+    .team-generator-card {
+        padding: 28px 18px 34px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

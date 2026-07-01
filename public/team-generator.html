@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分隊生成系統｜中大聯盟(中大紅襪)棒球學校</title>
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/team-generator.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="/">中大聯盟(中大紅襪)棒球學校</a>
+            </div>
+
+            <button id="menu-toggle" class="mobile-btn" type="button" aria-label="開啟選單">☰</button>
+
+            <nav id="nav-menu">
+                <ul>
+                    <li><a href="/">首頁</a></li>
+                    <li><a href="/enroll">招生體驗</a></li>
+                    <li><a href="/events">主辦賽事</a></li>
+                    <li><a href="/generator">生成系統</a></li>
+                    <li><a href="/teams">隊組資料</a></li>
+                    <li><a href="/umpire">裁判專區</a></li>
+                    <li><a href="/admin">查詢系統</a></li>
+                    <li id="auth-menu-item"><a href="/login">成員登入</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="banner"></div>
+
+    <main class="container team-generator-page">
+        <section class="team-generator-card">
+            <div class="team-generator-inner">
+                <h2>🏟️ 聯賽分隊自動生成系統</h2>
+
+                <p class="page-description">
+                    上傳球員資料 Excel，系統會依照層級、年級、新舊生、手足、教練子女、雙胞胎與中大特別組規則，自動產生分隊表。
+                </p>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="team_year">年度：</label>
+                        <input type="number" id="team_year" name="team_year" value="2026" inputmode="numeric">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="team_random_seed">隨機種子：</label>
+                        <input type="number" id="team_random_seed" name="team_random_seed" placeholder="預設為 42" inputmode="numeric">
+                    </div>
+
+                    <div class="form-group form-group-full">
+                        <label for="team_file">上傳球員資料 Excel：</label>
+                        <input type="file" id="team_file" name="team_file" accept=".xlsx,.xls">
+                    </div>
+                </div>
+
+                <button id="generate-team-btn" type="button" onclick="handleGenerateTeams()">
+                    🚀 生成並下載分隊表
+                </button>
+
+                <div id="team-status-msg" aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/public.js"></script>
+    <script src="/js/team-generator.js"></script>
+</body>
+</html>

@@ -665,5 +665,120 @@ router.post('/download-excel', async (req, res) => {
     res.end();
 });
 
+const teamUploadDir = path.join(__dirname, '../uploads/team-generator');
+const teamOutputDir = path.join(__dirname, '../outputs/team-generator');
+
+if (!fs.existsSync(teamUploadDir)) {
+    fs.mkdirSync(teamUploadDir, { recursive: true });
+}
+
+if (!fs.existsSync(teamOutputDir)) {
+    fs.mkdirSync(teamOutputDir, { recursive: true });
+}
+
+const teamStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, teamUploadDir);
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        cb(null, `players_${Date.now()}${ext}`);
+    }
+});
+
+const teamUpload = multer({
+    storage: teamStorage,
+    limits: {
+        fileSize: 20 * 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+
+        if (!['.xlsx', '.xls'].includes(ext)) {
+            return cb(new Error('只允許上傳 Excel 檔案：.xlsx 或 .xls'));
+        }
+
+        cb(null, true);
+    }
+});
+
+router.post('/teams/generate', teamUpload.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).send('沒有收到 Excel 檔案');
+    }
+
+    const teamYear = req.body.team_year || '2026';
+    const randomSeed = req.body.random_seed || '42';
+    const includeDiagnostics = req.body.include_diagnostics || 'false';
+
+    const inputPath = req.file.path;
+
+    const pythonExe = process.platform === 'win32' ? 'python' : 'python3';
+
+    /**
+     * 建議放這兩個檔案：
+     * public/python/team_assignment_core.py
+     * public/python/run_team_assignment.py
+     */
+    const pythonScript = path.join(__dirname, '../public/python/run_team_assignment.py');
+
+    const py = spawn(pythonExe, [
+        pythonScript,
+        '--input',
+        inputPath,
+        '--output-dir',
+        teamOutputDir,
+        '--team-year',
+        teamYear,
+        '--random-seed',
+        randomSeed,
+        '--include-diagnostics',
+        includeDiagnostics
+    ]);
+
+    let stdoutData = '';
+    let stderrData = '';
+
+    py.stdout.on('data', data => {
+        stdoutData += data.toString();
+    });
+
+    py.stderr.on('data', data => {
+        stderrData += data.toString();
+    });
+
+    py.on('error', err => {
+        fs.unlink(inputPath, () => {});
+        console.error('❌ Python 啟動失敗:', err);
+        return res.status(500).send('Python 啟動失敗，請確認是否已安裝 Python');
+    });
+
+    py.on('close', code => {
+        fs.unlink(inputPath, () => {});
+
+        if (code !== 0) {
+            console.error('❌ 分隊 Python 執行失敗:', stderrData || stdoutData);
+            return res.status(500).send(stderrData || stdoutData || '分隊程式執行失敗');
+        }
+
+        const outputFilename = `Final_Team_Assignments_${teamYear}.xlsx`;
+        const outputPath = path.join(teamOutputDir, outputFilename);
+
+        if (!fs.existsSync(outputPath)) {
+            console.error('❌ 找不到輸出檔案:', outputPath);
+            return res.status(500).send('找不到產生後的 Excel 檔案');
+        }
+
+        res.download(outputPath, outputFilename, err => {
+            if (err) {
+                console.error('❌ 下載分隊表失敗:', err);
+                return;
+            }
+
+            fs.unlink(outputPath, () => {});
+        });
+    });
+});
+
 
 module.exports = router;

@@ -36,8 +36,8 @@ app.get('/member', (req, res) => {
 });
 
 // private
-app.get('/fields', checkRole('member'), (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'fields.html'));
+app.get('/generator', checkRole('member'), (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'generator.html'));
 });
 app.get('/teams', checkRole('member'), (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'teams.html'));
@@ -47,6 +47,14 @@ app.get('/umpire', checkRole('umpire'), (req, res) => {
 });
 app.get('/admin', checkRole('admin'), (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+app.get("/game-generator", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "game-generator.html"));
+});
+
+app.get("/team-generator", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "team-generator.html"));
 });
 
 const publicRoutes = require('./routes/api');
