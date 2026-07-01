@@ -72,3 +72,11 @@ const server = app.listen(PORT, () => {
 server.on('error', (err) => {
     console.error('伺服器啟動失敗：', err);
 });
+
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        console.error('收到格式錯誤的 JSON:', err.message);
+        return res.status(400).send({ error: '無效的 JSON 格式' });
+    }
+    next();
+});
